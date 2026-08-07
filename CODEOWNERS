@@ -1,0 +1,35 @@
+# Code owners.
+#
+# @OWNER-TBD is a placeholder — see OPEN-DECISIONS.md #2. `npm run
+# check:release-gate` fails while it is unresolved, so a release cannot ship
+# with review authority pointing at nobody.
+#
+# The point of this file is not blanket ownership. It is that four categories of
+# change can silently weaken the agent's safety properties, and each needs a
+# reviewer who knows why the property exists.
+
+# Default.
+*                                   @OWNER-TBD
+
+# The agent definition. Its frontmatter carries four load-bearing decisions
+# (background:false, no AskUserQuestion, no isolation, no maxTurns), each with an
+# ADR and a Tier 0 rule. See CONTRIBUTING.md "Changing the safety properties".
+/plugins/backstage-idp/agents/      @OWNER-TBD
+
+# Skill content is what the agent acts on. A wrong assertion here is worse than
+# no skill, because the agent will act on it confidently.
+/plugins/backstage-idp/skills/      @OWNER-TBD
+
+# The rules themselves. A weakened rule is invisible in a content diff.
+/test/tier0/                        @OWNER-TBD
+/test/tier1/                        @OWNER-TBD
+
+# Every version-sensitive fact the plugin asserts, and the staleness budget that
+# decides when the currency job starts failing.
+/baseline.json                      @OWNER-TBD
+
+# Workflow changes can disable a required check without touching a test.
+/.github/workflows/                 @OWNER-TBD
+
+# The trust model an adopting security review reads.
+/SECURITY.md                        @OWNER-TBD

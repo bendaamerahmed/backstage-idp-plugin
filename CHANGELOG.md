@@ -1,0 +1,83 @@
+# Changelog
+
+All notable changes to the `backstage-idp` plugin are documented here.
+
+The format is [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this
+project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+Versioning applies to the **plugin**, not to the harness around it. A change that
+alters what the agent or a skill instructs is a plugin change and gets an entry.
+A change to the tests, CI or docs does not, unless it changed plugin content as a
+result — in which case the content change is what is listed.
+
+## [Unreleased]
+
+## [1.1.0] - 2026-08-07
+
+The first release with any verification behind it. 1.0.0 was hand-authored and
+had never been parsed, linted, or executed against a real Backstage repository.
+
+### Added
+
+- Validation harness covering Tiers 0-4 (structural, content invariants,
+  currency, behavioural evals, integration against real Backstage monorepos).
+  `npm test` runs everything available; `npm run test:fast` is the sub-10-second
+  tier. See `docs/test-coverage.md` for what each tier covers and what it does not.
+- `baseline.json` — every machine-checkable fact the plugin asserts, each with
+  the artifact it was verified against and a `verifiedOn` date. The weekly
+  currency job diffs it against live upstream sources and opens an issue naming
+  the specific assertions to re-verify.
+- Marketplace packaging: `.claude-plugin/marketplace.json`, so the plugin is
+  installable by name rather than by copying files.
+- Prompt-injection corpus and tests asserting the agent treats repository
+  content as data.
+- `docs/` — architecture, the skill authoring contract, ADRs for the
+  load-bearing decisions, a runbook, and an honest coverage report.
+
+### Changed
+
+- `backstage-permissions`: `description` trimmed from 204 to under the 200-char
+  cap; the trailing trigger phrasing moved to `when_to_use`, where it is
+  budgeted separately.
+- `backstage-plugin-migrate`: step 10 rewritten so a wrapped line no longer
+  begins with `+`, which CommonMark was rendering as a stray bullet list.
+- `backstage-auth`: `<provider>` in an error-message heading is now a code span.
+  Previously markdown parsed it as an HTML tag and dropped it, leaving an error
+  string the agent could not match against real logs.
+- `pull-request-ready`: the claim that a default `create-app` repo has "exactly"
+  a named list of scripts was wrong — it omitted `build:backend`, `build:all`
+  and `build-image`. Corrected against the published
+  `@backstage/create-app@0.9.0` template.
+- `backstage-upgrade`: `@backstage-community/plugin-x` in an error example
+  replaced with an unambiguous placeholder; `plugin-x` reads as a real package
+  name and does not exist on npm.
+- Agent frontmatter: `permissionMode: auto` now carries a comment recording that
+  it is **not** load-bearing for a plugin-shipped agent, so an audit of what
+  gates the agent's write access is not misled by it.
+- Fenced code blocks throughout now declare a language and sit inside blank
+  lines, so they render as code rather than as list continuation.
+
+### Fixed
+
+- Three manifests declared two different versions. `scripts/set-version.mjs` is
+  now the supported way to change them, and Tier 0 fails if they disagree.
+
+### Security
+
+- `SECURITY.md` states the trust model plainly: this plugin instructs an agent
+  with write access to a repository. It enumerates what the agent will and will
+  not do and what an operator must gate.
+- Tier 1 forbids `npx backstage-cli`. The bare npm name `backstage-cli` is an
+  unrelated third-party package, so that command does not run the Backstage CLI.
+  The plugin never did this; the rule stops it starting.
+
+## [1.0.0] - 2026-08-06
+
+Initial hand-authored plugin: one subagent definition and twelve skills,
+researched against official Backstage documentation. Never executed, never
+tested, no release process. Recorded here for completeness — see
+`archive/HARDENING-REPORT.md` for the review that preceded it.
+
+[Unreleased]: https://github.com/OWNER-TBD/REPO-TBD/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/OWNER-TBD/REPO-TBD/releases/tag/v1.1.0
+[1.0.0]: https://github.com/OWNER-TBD/REPO-TBD/releases/tag/v1.0.0
