@@ -1,6 +1,6 @@
 import test from 'node:test';
 import path from 'node:path';
-import { loadSkills, loadAgent, listSkills, proseLines, headings, readRaw, PLUGIN_DIR } from '../helpers/repo.mjs';
+import { loadSkills, loadAgent, listSkills, proseLines, headings, readRaw, PLUGIN_DIR, PLUGIN_MANIFEST, MARKETPLACE_MANIFEST, REPO_ROOT } from '../helpers/repo.mjs';
 import { checkRule } from '../helpers/rules.mjs';
 
 const skills = loadSkills().filter((s) => s.exists);
@@ -178,6 +178,57 @@ test('the plugin README lists exactly the shipped skills', () => {
           expected: 'a skill that ships',
           fix: 'remove the entry or ship the skill',
         });
+      }
+    },
+  );
+});
+
+// Counts drift the moment a skill is added, and they drift in the places nobody
+// re-reads. Adding three skills in 1.2.0 updated agent §16 and both READMEs but
+// left "twelve verified Backstage workflow skills" in plugin.json and
+// marketplace.json — which is the text an adopter sees on npm, in the
+// marketplace listing and in `claude plugin details`. It shipped in three
+// releases before an end-to-end install surfaced it.
+//
+// Scoped deliberately to adopter-facing surfaces. A blanket scan would fire on
+// prose that is historically accurate ("1.0.0 shipped twelve skills"), and a
+// rule that fires on correct sentences gets suppressed.
+test('no adopter-facing surface states a stale skill count', () => {
+  checkRule(
+    'skill-count-claims-accurate',
+    'any "<n> skills" claim in plugin.json, marketplace.json or either README matches the number of skills that ship',
+    'These four strings are what an adopter reads before installing: the npm description, the marketplace listing, and both READMEs. A count that is wrong there is the first thing they can check and the first thing that undermines everything else the page claims.',
+    (r) => {
+      const WORDS = {
+        eight: 8, nine: 9, ten: 10, eleven: 11, twelve: 12, thirteen: 13, fourteen: 14,
+        fifteen: 15, sixteen: 16, seventeen: 17, eighteen: 18, nineteen: 19, twenty: 20,
+      };
+      const actual = skillNames.size;
+      // Built by concatenation, NOT a template literal. In a template literal
+      // `\b` is a backspace and `\d`/`\s`/`\w` collapse to bare letters, so the
+      // pattern silently matches nothing and the rule passes on everything.
+      // This exact trap already shipped once in scripts/release-notes.mjs.
+      const pattern = new RegExp(
+        '\\b(' + Object.keys(WORDS).join('|') + '|\\d{1,2})\\s+(?:\\w+\\s+){0,3}?skills?\\b',
+        'gi',
+      );
+
+      const surfaces = [
+        ['plugins/backstage-idp/.claude-plugin/plugin.json', JSON.parse(readRaw(PLUGIN_MANIFEST)).description ?? ''],
+        ['.claude-plugin/marketplace.json', JSON.stringify(JSON.parse(readRaw(MARKETPLACE_MANIFEST)))],
+        ['plugins/backstage-idp/README.md', readRaw(path.join(PLUGIN_DIR, 'README.md'))],
+        ['README.md', readRaw(path.join(REPO_ROOT, 'README.md'))],
+      ];
+
+      for (const [file, text] of surfaces) {
+        for (const m of String(text).matchAll(pattern)) {
+          const claimed = WORDS[m[1].toLowerCase()] ?? Number(m[1]);
+          r.require(claimed === actual, file, {
+            found: `"${m[0].trim()}"`,
+            expected: `${actual} skills`,
+            fix: 'update it, or drop the number — every count is a thing that can go stale, and this one shipped wrong in three releases',
+          });
+        }
       }
     },
   );

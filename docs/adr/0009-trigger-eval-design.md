@@ -5,7 +5,7 @@
 
 ## Context
 
-Twelve skills compete for the same requests. A skill that never fires is dead
+Fifteen skills compete for the same requests. A skill that never fires is dead
 weight; one that fires on everything is noise that displaces the answer the user
 wanted. From inside the repository those two failures are indistinguishable —
 both look like a well-written skill.
@@ -13,8 +13,8 @@ both look like a well-written skill.
 ## Decision
 
 Measure the **selection** decision: given the listing a model actually sees
-(name + description + `when_to_use` for all twelve) and a user prompt, which
-skill does it pick? Score 167 labelled cases, three votes each, against
+(name + description + `when_to_use` for all fifteen) and a user prompt, which
+skill does it pick? Score 209 labelled cases, three votes each, against
 committed per-skill floors.
 
 ## Consequences
@@ -25,7 +25,7 @@ This measures the layer that `description` and `when_to_use` exist to drive. It
 does **not** measure whether a full agent turn ends up invoking the skill, which
 also depends on task complexity and on what else is in context — Claude skips
 consulting a skill for work it can do directly. An end-to-end trigger eval needs
-a full agent run per case; at 167 cases that is hours, not minutes.
+a full agent run per case; at 209 cases that is hours, not minutes.
 
 Stated as a gap in `docs/test-coverage.md`. The mitigation is that the
 behavioural scenarios (`test/tier3/scenarios.json`) *do* use full agent runs, so
@@ -77,7 +77,7 @@ not the plugin.
 
 `skill-creator` has description-optimisation tooling and it is the right tool
 for a single skill. It optimises one description against a should-trigger /
-should-not-trigger set. The problem here is twelve descriptions competing, where
-improving one can degrade another — measuring that needs all twelve in the
+should-not-trigger set. The problem here is fifteen descriptions competing, where
+improving one can degrade another — measuring that needs all fifteen in the
 listing at once and per-skill precision *and* recall. The corpus format is kept
 compatible so the skill-creator loop can be pointed at any individual skill.

@@ -94,7 +94,7 @@ which is which, per skill.
 | 0 | Frontmatter, structure, cross-references, the agent's safety properties, `claude plugin validate` | every commit, under 10 s |
 | 1 | Authorization gating, no mid-run questions, generation detection, package and link liveness | every commit |
 | 2 | `baseline.json` against live upstream: release line, Node majors, CLI flags, config keys | weekly |
-| 3 | Trigger accuracy (167 labelled prompts), agent behaviour, prompt injection | on content changes |
+| 3 | Trigger accuracy (209 labelled prompts), agent behaviour, prompt injection | on content changes |
 | 4 | Real `create-app` monorepos, asserted with the fixture's own `tsc`/`lint`/`test`/`build` | nightly |
 
 Every rule is itself tested: `scripts/mutation-check.mjs` breaks one thing at a

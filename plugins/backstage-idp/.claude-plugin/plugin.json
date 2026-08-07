@@ -1,8 +1,8 @@
 {
   "name": "backstage-idp",
   "displayName": "Backstage IDP Engineering",
-  "version": "1.2.3",
-  "description": "Autonomous full-stack engineering for Spotify Backstage developer portals: one senior subagent plus twelve verified Backstage workflow skills.",
+  "version": "1.2.4",
+  "description": "Autonomous full-stack engineering for Spotify Backstage developer portals: one senior subagent plus fifteen verified Backstage workflow skills.",
   "author": {
     "name": "ahmed ben"
   },

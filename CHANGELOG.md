@@ -12,6 +12,35 @@ result — in which case the content change is what is listed.
 
 ## [Unreleased]
 
+## [1.2.4] - 2026-08-07
+
+### Fixed
+
+- The plugin described itself as **"twelve verified Backstage workflow skills"**
+  while shipping fifteen. It had been wrong since 1.2.0, when `backstage-theming`,
+  `backstage-kubernetes` and `kubernetes-crd-author` were added: the agent's §16
+  count and both READMEs were updated, `plugin.json` and `marketplace.json` were
+  not. That description is the text an adopter reads on npm, in the marketplace
+  listing, and in `claude plugin details` — the first claim they can check, and
+  it was wrong in three consecutive releases.
+
+  Found by installing the published package and reading the output of
+  `claude plugin details`, not by any test. The existing rule checked the count
+  in the agent's §16 and nothing else.
+
+- `docs/architecture.md`, `docs/adr/0009` and `docs/authoring.md` carried the
+  same stale counts, plus a stale corpus size (167 cases, now 209). Statements
+  that are historically accurate — the 1.0.0 changelog entry, and architecture's
+  note that 1.0.0 listed twelve skills as a roadmap — are left alone.
+
+### Added
+
+- Tier 0 rule `skill-count-claims-accurate`: any "`<n>` skills" claim in
+  `plugin.json`, `marketplace.json` or either README must match the number of
+  skills that ship. Scoped to adopter-facing surfaces on purpose — a blanket
+  scan would fire on prose that is correctly describing an older release, and a
+  rule that fires on correct sentences gets suppressed rather than fixed.
+
 ## [1.2.3] - 2026-08-07
 
 No change to the plugin; identical content to 1.2.0 through 1.2.2. This release
@@ -213,7 +242,8 @@ researched against official Backstage documentation. Never executed, never
 tested, no release process. Recorded here for completeness; the review that
 preceded it is summarised in the ADRs under `docs/adr/`.
 
-[Unreleased]: https://github.com/bendaamerahmed/backstage-idp-plugin/compare/v1.2.3...HEAD
+[Unreleased]: https://github.com/bendaamerahmed/backstage-idp-plugin/compare/v1.2.4...HEAD
+[1.2.4]: https://github.com/bendaamerahmed/backstage-idp-plugin/releases/tag/v1.2.4
 [1.2.3]: https://github.com/bendaamerahmed/backstage-idp-plugin/releases/tag/v1.2.3
 [1.2.2]: https://github.com/bendaamerahmed/backstage-idp-plugin/releases/tag/v1.2.2
 [1.2.1]: https://github.com/bendaamerahmed/backstage-idp-plugin/releases/tag/v1.2.1

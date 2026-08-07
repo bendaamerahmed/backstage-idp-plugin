@@ -19,7 +19,7 @@ not by reading.
 | 0 — structural | 39 | every commit | ~200 ms |
 | 1 — content invariants | 12 | every commit | ~1 s |
 | 2 — currency | 6 | weekly | ~5 s |
-| 3 — trigger accuracy | 167 cases x 3 votes | on content change | ~11 min |
+| 3 — trigger accuracy | 209 cases x 3 votes | on content change | ~16 min |
 | 3 — behaviour and injection | 11 scenarios x 2 runs | on content change | ~25 min |
 | 4 — integration | 5 scenarios | nightly | ~7 s + fixture build |
 
@@ -76,7 +76,7 @@ against an artifact, and they go red the month they stop being true.
 
 ## Measured results
 
-**Trigger accuracy** (167 cases, 3-vote majority, claude-sonnet-5):
+**Trigger accuracy** (209 cases, 3-vote majority, claude-sonnet-5):
 94.6% overall, **100% negative rejection (35/35)**, **100% near-miss (12/12)**.
 Floors committed ~10 points below observed, with a rule preventing them from
 being quietly raised to fit.
@@ -96,12 +96,12 @@ citing the result.
 
 Stated in full in `docs/test-coverage.md`. The three that matter:
 
-1. **Nine of twelve skills have no scenario that executes their procedure.** The
+1. **Eleven of fifteen skills have no scenario that executes their procedure.** The
    Tier 4 scenarios verify the *premises* the skills rest on, not their
-   *outputs*. The twelve scenarios named in the brief are listed individually
+   *outputs*. The scenarios named in the brief are listed individually
    with what each needs. The harness and one real fixture exist, so each is
    incremental work rather than new infrastructure — but the honest claim today
-   is that those nine skills are structurally sound, currently accurate on every
+   is that those eleven skills are structurally sound, currently accurate on every
    machine-checkable fact, and trigger correctly, with their procedures
    unexecuted.
 

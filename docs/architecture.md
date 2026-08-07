@@ -18,7 +18,7 @@ inspect before changing, validate before claiming, stop before mutating a shared
 system — have not needed a correction since they were written. The skills'
 content is version-sensitive by construction: package names move, config keys are
 removed, a blueprint relocates between packages. Splitting them means a monthly
-Backstage release touches twelve small files with focused diffs, not one file
+Backstage release touches fifteen small files with focused diffs, not one file
 where a reviewer cannot see what changed in substance.
 
 **A skill can be measured; a paragraph cannot.** `backstage-catalog` has a
@@ -27,7 +27,7 @@ real monorepo (Tier 4). "The paragraph about catalog providers" has neither. The
 split is what makes the content testable at all, and testability is the whole
 difference between this and a well-written document.
 
-The cost is real: twelve descriptions competing for the same requests, which is
+The cost is real: fifteen descriptions competing for the same requests, which is
 why Tier 3 exists and why `backstage-incident-debug` had to be given an explicit
 boundary clause after it was measured absorbing four other skills' work.
 

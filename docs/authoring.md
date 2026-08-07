@@ -146,7 +146,7 @@ These decide whether the skill fires at all, so they are the only fields with a
 measurement attached.
 
 1. Make the change.
-2. `npm run evals` — 167 cases, 3 votes each, roughly 11 minutes.
+2. `npm run evals` — 209 cases, 3 votes each, roughly 16 minutes.
 3. Check per-skill precision and recall against `test/tier3/thresholds.json`.
 4. Commit the regenerated `test/tier3/results/latest.json` **with** the content
    change. The results carry a hash of the corpus plus every description and

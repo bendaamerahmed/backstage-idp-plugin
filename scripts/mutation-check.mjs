@@ -20,8 +20,15 @@ import os from 'node:os';
 import { spawnSync } from 'node:child_process';
 import { REPO_ROOT } from '../test/helpers/repo.mjs';
 
-/** Files the rules read. Copied per mutant; everything else stays shared. */
-const TRACKED = ['plugins', 'baseline.json', '.claude-plugin', 'package.json'];
+/**
+ * Files the rules read. Copied per mutant; everything else stays shared.
+ *
+ * If a rule reads a file that is not here, the suite throws ENOENT against the
+ * scratch tree and the mutant is reported as "caught by (no rule named)" — a
+ * crash, not a detection. That is the correct report: a rule that cannot run
+ * against the scratch tree is not proven to work.
+ */
+const TRACKED = ['plugins', 'baseline.json', '.claude-plugin', 'package.json', 'README.md'];
 
 /**
  * Each mutant: what it breaks, which rule must catch it, and the edit.
@@ -152,6 +159,16 @@ const MUTANTS = [
       const j = JSON.parse(fs.readFileSync(p, 'utf8'));
       j.scripts['test:tier0'] = 'node --test test/tier0/';
       fs.writeFileSync(p, `${JSON.stringify(j, null, 2)}\n`);
+    },
+  },
+  {
+    id: 'skill-count-claims-accurate',
+    what: 'revert the plugin description to the stale "twelve skills" that shipped in three releases',
+    edit: (root) => {
+      const p = path.join(root, 'plugins/backstage-idp/.claude-plugin/plugin.json');
+      const j = JSON.parse(fs.readFileSync(p, 'utf8'));
+      j.description = j.description.replace('fifteen', 'twelve');
+      fs.writeFileSync(p, JSON.stringify(j, null, 2) + '\n');
     },
   },
   {
