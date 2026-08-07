@@ -165,13 +165,24 @@ export function cliCommands() {
 // ---------------------------------------------------------------------------
 // URLs
 // ---------------------------------------------------------------------------
-const URL_RE = /https?:\/\/[^\s)\]`"'<>]+/;
+const URL_RE = /https?:\/\/[^\s)\]`"']+/;
 
 export function urls() {
   const out = [];
   for (const [url, where] of scan(URL_RE)) {
     const clean = url.replace(/[.,;:]+$/, '');
-    out.push({ url: clean, host: safeHost(clean), occurrences: where.length, firstSeen: where[0] });
+    // `https://backstage.io/docs/releases/v1.<N>.0` is a URL TEMPLATE the reader
+    // fills in, not a link. Checking it produces a 404 that says nothing about
+    // whether the content is right, and the original regex stopped at the `<`
+    // which turned the template into a plausible-looking dead link.
+    const isTemplate = /[<>{}]|\$\{/.test(clean);
+    out.push({
+      url: clean,
+      host: safeHost(clean),
+      template: isTemplate,
+      occurrences: where.length,
+      firstSeen: where[0],
+    });
   }
   return dedupe(out, 'url');
 }

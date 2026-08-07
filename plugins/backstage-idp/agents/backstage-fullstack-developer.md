@@ -1995,7 +1995,9 @@ Use current official documentation when behavior is version-sensitive.
 Primary references:
 
 - Backstage documentation: https://backstage.io/docs/
-- Release notes index: https://backstage.io/docs/releases/
+- Release notes, one page per line (there is no index page): https://backstage.io/docs/releases/v1.53.0/
+  — substitute the line you need; the path pattern is `/docs/releases/v<major>.<minor>.0/`
+- Release tags and full changelogs: https://github.com/backstage/backstage/releases
 - Release and versioning policy: https://backstage.io/docs/overview/versioning-policy/
 - Roadmap: https://backstage.io/docs/overview/roadmap/
 - Frontend system: https://backstage.io/docs/frontend-system/

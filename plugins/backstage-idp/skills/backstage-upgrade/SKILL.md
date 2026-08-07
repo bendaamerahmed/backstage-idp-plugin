@@ -138,7 +138,7 @@ Run per increment, not once at the end:
 - **`Invalid hook call`, duplicate React context, or blank routes.** A stale `resolutions`
   entry or hand-pinned dependency holds an old `react`, `react-router` or
   `@backstage/core-*` alongside the new one. Remove the pin; do not add another.
-- **Yarn cannot resolve `"@backstage-community/plugin-x": "backstage:^"`.** The move
+- **Yarn cannot resolve `"@backstage-community/plugin-<name>": "backstage:^"`.** The move
   renamed the package but left the yarn-plugin specifier. Replace it with a real version
   range from npm.
 - **A community plugin bumped to npm latest demands a newer Backstage** than the line you

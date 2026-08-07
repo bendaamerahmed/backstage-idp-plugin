@@ -17,7 +17,10 @@
     "verifiedBy": "fetched manifest; releaseVersion field read directly"
   },
   "node": {
-    "supportedMajors": [22, 24],
+    "supportedMajors": [
+      22,
+      24
+    ],
     "enginesRange": "22 || 24",
     "policySince": "1.46.0",
     "policy": "exactly two adjacent even majors",
@@ -28,9 +31,19 @@
   "createApp": {
     "package": "@backstage/create-app",
     "version": "0.9.0",
-    "flags": ["--legacy", "--path", "--skip-install", "--template-path"],
-    "removedFlags": ["--next"],
-    "templates": ["default-app", "legacy-app"],
+    "flags": [
+      "--legacy",
+      "--path",
+      "--skip-install",
+      "--template-path"
+    ],
+    "removedFlags": [
+      "--next"
+    ],
+    "templates": [
+      "default-app",
+      "legacy-app"
+    ],
     "defaultTemplateIsNfs": true,
     "nfsDefaultSince": "1.49.0",
     "rootScripts": [
@@ -92,7 +105,12 @@
         "verifiedBy": "https://registry.npmjs.org/backstage-cli returns 200 for an unrelated package: 'The CLI companion that lets you upload builds to your Backstage Server.'"
       }
     ],
-    "safeInvocations": ["yarn backstage-cli", "yarn <script>", "npx @backstage/cli", "npx @techdocs/cli"]
+    "safeInvocations": [
+      "yarn backstage-cli",
+      "yarn <script>",
+      "npx @backstage/cli",
+      "npx @techdocs/cli"
+    ]
   },
   "supportMatrix": {
     "_note": "See OPEN-DECISIONS.md #4. oldestSupportedLine is the oldest line the skills' guidance was WRITTEN against, not a line anything has been tested on.",
@@ -112,7 +130,27 @@
   },
   "linkChecking": {
     "_note": "Hosts that rate-limit aggressively enough to make link checking flaky. Excluded from the every-commit tier, still checked weekly.",
-    "rateLimitedHosts": ["github.com", "www.github.com", "registry.npmjs.org", "roadie.io"],
-    "neverCheck": ["localhost", "127.0.0.1", "example.com", "host"]
+    "rateLimitedHosts": [
+      "github.com",
+      "www.github.com",
+      "registry.npmjs.org",
+      "roadie.io"
+    ],
+    "neverCheck": [
+      "localhost",
+      "127.0.0.1",
+      "example.com",
+      "host"
+    ]
+  },
+  "documentation": {
+    "_note": "Verified URL shapes. backstage.io has no release-notes index page — only per-line pages. Tier 2 re-checks both.",
+    "releaseNotesUrlPattern": "https://backstage.io/docs/releases/v{major}.{minor}.0/",
+    "releaseNotesIndexExists": false,
+    "releaseTagsUrl": "https://github.com/backstage/backstage/releases",
+    "versioningPolicyUrl": "https://backstage.io/docs/overview/versioning-policy/",
+    "source": "https://backstage.io/sitemap.xml — 572 release pages, none at /docs/releases/",
+    "verifiedOn": "2026-08-07",
+    "verifiedBy": "fetched the sitemap and probed /docs/releases/ directly; it returns 404"
   }
 }
