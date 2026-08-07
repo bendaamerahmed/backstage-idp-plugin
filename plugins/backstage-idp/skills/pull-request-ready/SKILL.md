@@ -46,10 +46,13 @@ Turn a finished Backstage change into something a reviewer can approve: a diff t
     - **Screenshots / UI notes** — required by the upstream template for UI changes. You cannot produce screenshots; say so explicitly and name the exact route, entity, and state a human must capture.
     - **Reviewer must check manually** — everything CI cannot reach: real IdP login, SCM webhooks, a live Kubernetes cluster, permission decisions against a real policy, TechDocs publishing to a real bucket.
 15. **Stop.** Report the branch, base, title, body path, and the exact commands — then return for authorization without running them:
-    ```
+
+    ```bash
     git push -u origin <branch>
     gh pr create --base <base> --head <branch> --title "<title>" --body-file /tmp/pr-body.md
+
     ```
+
     Do not run these. Do not run `gh pr merge`, `gh pr create --fill`, `git push --force`, or anything with `--admin`. This holds even if a PR for the branch already exists.
 
 ## Verification

@@ -75,8 +75,8 @@ systems during the transition. Scope, map, verify parity.
     (`@backstage/plugin-search-react/alpha`); app-level ones live in
     `@backstage/plugin-app-react` (`SignInPageBlueprint`, `ThemeBlueprint`,
     `IconBundleBlueprint`, `TranslationBlueprint`, `SwappableComponentBlueprint`).
-    Only when no blueprint fits, drop to `createExtension` + `createExtensionInput`
-    + `createExtensionDataRef`.
+    Only when no blueprint fits, drop to `createExtension` with
+    `createExtensionInput` and `createExtensionDataRef`.
 11. **Compatibility layer — only for plugins you do not own.** In an NFS app, wrap a
     third-party legacy plugin with `convertLegacyPlugin(legacyPlugin, { extensions: [...] })`
     from `@backstage/core-compat-api`, building those extensions with

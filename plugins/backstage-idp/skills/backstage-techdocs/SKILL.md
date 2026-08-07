@@ -28,13 +28,16 @@ Wire the docs-like-code pipeline correctly, and tell apart the four places it br
    - An entity with no `techdocs-ref` gets no docs tab content. A monorepo child that should show a parent's docs uses `backstage.io/techdocs-entity: <kind>:<namespace>/<name>` (plus `backstage.io/techdocs-entity-path` to deep-link), not a duplicate `techdocs-ref`.
    - A `url:` target must be reachable by an `integrations.*` credential in the *backend's* config, not just yours (`backstage-repo-discovery`).
 3. **Check the source layout third.** At the root of whatever `techdocs-ref` resolves to: `mkdocs.yml` (or `mkdocs.yaml`) plus a `docs/` directory containing at minimum `index.md`. Minimum config:
+
    ```yaml
    site_name: 'example-docs'
    nav:
      - Home: index.md
    plugins:
      - techdocs-core
+
    ```
+
    `techdocs-core` is injected automatically when absent unless `techdocs.generator.mkdocs.omitTechdocsCorePlugin: true`. Rename `docs/` only via mkdocs' own `docs_dir` key. `nav` is optional — omitting it makes MkDocs infer navigation from the file tree.
 4. **Reproduce locally before changing any config.** From the directory holding `mkdocs.yml`: `npx @techdocs/cli serve` (Docker, full Backstage-like reader on :3000) or `npx @techdocs/cli serve --no-docker`. `serve:mkdocs` gives a bare MkDocs server, which isolates whether a problem is MkDocs or the TechDocs reader. Add `--mkdocs-parameter-strict` to make warnings — dead links, files absent from `nav` — fail the build instead of silently producing empty pages.
 5. **Choose `runIn` deliberately; it is a deployment constraint, not a preference.**
@@ -43,11 +46,14 @@ Wire the docs-like-code pipeline correctly, and tell apart the four places it br
    Pin the version (`mkdocs-techdocs-core==<x.y.z>`) so a backend rebuild cannot silently change rendering.
 6. **For production, move generation out of the backend.** Set `techdocs.builder: 'external'`, configure a cloud publisher, and generate in each entity repository's CI. Do not do the config flip and the CI rollout in the same change — an `external` backend with nothing yet in the bucket serves 404s for every entity.
 7. **Write the CI job as generate-then-publish, two distinct steps.**
-   ```
+
+   ```bash
    npx @techdocs/cli generate --no-docker --source-dir . --output-dir ./site --etag "$COMMIT_SHA"
    npx @techdocs/cli publish --publisher-type awsS3 --storage-name "$TECHDOCS_S3_BUCKET_NAME" \
      --entity default/Component/my-component --directory ./site
+
    ```
+
    - `--entity` is the `<namespace>/<kind>/<name>` triplet and must match the catalog entity exactly; it determines the storage path the backend later reads.
    - `--etag` (commit SHA) lands in `techdocs_metadata.json` and is what the backend compares to decide freshness. Omitting it disables staleness detection.
    - `--no-docker` requires `mkdocs-techdocs-core` in the CI runner. Without it, use the default Docker path and drop the flag.

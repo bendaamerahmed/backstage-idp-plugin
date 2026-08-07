@@ -39,7 +39,7 @@ into a marketplace repo and install by name.
 
 **Directly into a repository** — copy the pieces into your Backstage monorepo:
 
-```
+```bash
 cp agents/backstage-fullstack-developer.md  <repo>/.claude/agents/
 cp -r skills/*                              <repo>/.claude/skills/
 ```
