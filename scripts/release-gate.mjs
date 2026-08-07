@@ -44,14 +44,15 @@ for (const relPath of SHIPPED) {
   }
   const text = fs.readFileSync(abs, 'utf8');
   text.split('\n').forEach((line, i) => {
-    for (const p of PLACEHOLDERS) {
-      if (!line.includes(p)) continue;
-      problem(
-        `${relPath}:${i + 1}`,
-        `unresolved placeholder "${p}": ${line.trim().slice(0, 90)}`,
-        'see OPEN-DECISIONS.md, then run `node scripts/apply-open-decisions.mjs --help`',
-      );
-    }
+    // Longest first, and one report per line: `OWNER-TBD` also contains `TBD`,
+    // and reporting both turns 10 real problems into 30 and buries them.
+    const hit = [...PLACEHOLDERS].sort((a, b) => b.length - a.length).find((p) => line.includes(p));
+    if (!hit) return;
+    problem(
+      `${relPath}:${i + 1}`,
+      `unresolved placeholder "${hit}": ${line.trim().slice(0, 90)}`,
+      'see OPEN-DECISIONS.md, then run `node scripts/apply-open-decisions.mjs --help`',
+    );
   });
 }
 
