@@ -12,6 +12,30 @@ result — in which case the content change is what is listed.
 
 ## [Unreleased]
 
+## [1.3.0] - 2026-08-07
+
+### Added
+
+- The npm package declares a `bin`. `npx @backstage-idp-plugin/backstage-idp`
+  previously failed with "could not determine executable to run", which reads as
+  a broken package rather than as "this is not a CLI". It now prints the install
+  commands, and takes `--list`, `--path`, `--json` and `--version`.
+
+  The script lives in the npm wrapper, never inside the plugin, so the `.plugin`
+  bundle Claude Code loads remains markdown and JSON only. It reads its own
+  package directory and writes to stdout; four Tier 0 rules enforce that it
+  performs no filesystem writes, no child processes, no network access, no
+  dynamic evaluation, and imports nothing outside `node:` builtins.
+
+- `SECURITY.md` now distinguishes the plugin bundle (no executable code) from
+  the npm package (exactly one, described and constrained). Shipping an
+  executable that the security document did not mention would have been the
+  fastest way to lose a reviewer.
+
+- README: how to update a plugin (the marketplace-qualified name is required),
+  what `npx` does and does not do, and `npm audit signatures` for verifying
+  provenance.
+
 ## [1.2.4] - 2026-08-07
 
 ### Fixed
@@ -242,7 +266,8 @@ researched against official Backstage documentation. Never executed, never
 tested, no release process. Recorded here for completeness; the review that
 preceded it is summarised in the ADRs under `docs/adr/`.
 
-[Unreleased]: https://github.com/bendaamerahmed/backstage-idp-plugin/compare/v1.2.4...HEAD
+[Unreleased]: https://github.com/bendaamerahmed/backstage-idp-plugin/compare/v1.3.0...HEAD
+[1.3.0]: https://github.com/bendaamerahmed/backstage-idp-plugin/releases/tag/v1.3.0
 [1.2.4]: https://github.com/bendaamerahmed/backstage-idp-plugin/releases/tag/v1.2.4
 [1.2.3]: https://github.com/bendaamerahmed/backstage-idp-plugin/releases/tag/v1.2.3
 [1.2.2]: https://github.com/bendaamerahmed/backstage-idp-plugin/releases/tag/v1.2.2

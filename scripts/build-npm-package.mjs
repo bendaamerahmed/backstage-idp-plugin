@@ -57,6 +57,14 @@ function main() {
   // Things npm consumers expect at the package root.
   fs.copyFileSync(path.join(REPO_ROOT, 'LICENSE'), path.join(OUT, 'LICENSE'));
 
+  // The one executable in the package. It lives in npm/ rather than inside the
+  // plugin so the .plugin bundle an adopter installs into Claude Code stays
+  // markdown and JSON only — `plugin-bundle-contents` enforces that, and adding
+  // a script under plugins/ would break it. See SECURITY.md, which describes
+  // this file to adopters.
+  fs.mkdirSync(path.join(OUT, 'bin'), { recursive: true });
+  fs.copyFileSync(path.join(REPO_ROOT, 'npm/bin/backstage-idp.mjs'), path.join(OUT, 'bin/backstage-idp.mjs'));
+
   const repoUrl = 'https://github.com/bendaamerahmed/backstage-idp-plugin';
 
   const pkg = {
@@ -69,10 +77,13 @@ function main() {
     homepage: `${repoUrl}#readme`,
     repository: { type: 'git', url: `git+${repoUrl}.git` },
     bugs: { url: `${repoUrl}/issues` },
-    // No entry point on purpose: this package is markdown, not a module. Declaring
-    // `main` would make `require()` half-work and mislead anyone who tried.
+    // No `main` on purpose: this package is markdown, not a module. Declaring one
+    // would make `require()` half-work and mislead anyone who tried. The `bin`
+    // exists only so `npx` explains itself instead of failing with "could not
+    // determine executable to run".
     type: 'module',
-    files: ['.claude-plugin/', 'agents/', 'skills/', 'README.md', 'LICENSE'],
+    bin: { 'backstage-idp': 'bin/backstage-idp.mjs' },
+    files: ['.claude-plugin/', 'agents/', 'skills/', 'bin/', 'README.md', 'LICENSE'],
     engines: { node: '>=22.0.0' },
     publishConfig: { access: 'public' },
     // Consumed by `npm view` and by anyone auditing what an install would run.

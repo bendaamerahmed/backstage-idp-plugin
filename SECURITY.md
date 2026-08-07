@@ -2,11 +2,35 @@
 
 ## What this repository ships
 
-Markdown. There is no runtime code in the plugin — no scripts, no binaries, no
-network calls. Tier 0 (`plugin-bundle-contents`) fails the build if anything
-other than `.md` and `.json` appears inside `plugins/backstage-idp/`.
+**The Claude Code plugin is markdown.** No scripts, no binaries, no network
+calls. Tier 0 (`plugin-bundle-contents` and `plugin-bundle-stays-code-free`)
+fails the build if anything other than `.md` and `.json` appears inside
+`plugins/backstage-idp/`, so the `.plugin` bundle you install stays reviewable
+as content.
 
-That does not make it harmless. **This plugin instructs an agent that has write
+**The npm package ships one executable.** `@backstage-idp-plugin/backstage-idp`
+declares a `bin`, `bin/backstage-idp.mjs`, so that
+`npx @backstage-idp-plugin/backstage-idp` prints install instructions instead of
+failing with "could not determine executable to run". It is the only executable
+in the package, and it is not part of the plugin bundle.
+
+What it does: reads `.claude-plugin/plugin.json` and the `SKILL.md` frontmatter
+inside its own package directory, and writes text to **stdout**. That is all.
+
+What it may never do, enforced by `npm-bin-is-inert` on every commit:
+
+- write to the filesystem
+- start a child process
+- make a network request
+- evaluate code dynamically
+- import anything outside `node:` builtins (it has no dependencies)
+
+If you are auditing this, read the file — it is about 100 lines. The rules exist
+so that this description cannot quietly stop being true; changing the script to
+do any of the above fails the build with a message telling you to change this
+section first.
+
+That does not make the plugin harmless. **This plugin instructs an agent that has write
 access to your repository and a shell.** The risk is not that the plugin executes
 something; it is that the plugin tells a capable agent what to do, and repository
 content it reads along the way may try to tell it something else.
@@ -78,6 +102,8 @@ as below.
 
 ## Supply chain
 
+- **The published npm package has zero dependencies.** Its only executable is
+  the inert `bin/backstage-idp.mjs` described above.
 - **Test tooling.** Two direct devDependencies: `yaml` and `markdownlint-cli2`.
   Both are pinned to exact versions. `yaml` is not optional — Tier 0 exists to
   catch frontmatter a real YAML parser rejects, so a hand-rolled parser would

@@ -42,11 +42,37 @@ Add this repository as a plugin marketplace, then install by name:
 /plugin install backstage-idp
 ```
 
+Updating later requires the marketplace-qualified name — the bare name returns
+"not found":
+
+```text
+claude plugin update backstage-idp@backstage-idp-marketplace
+```
+
 Or copy the pieces straight into a repository — see
 [`plugins/backstage-idp/README.md`](plugins/backstage-idp/README.md).
 
 Requires Claude Code. The plugin itself is markdown; nothing is installed into
 your Backstage repository.
+
+### It is also on npm
+
+```bash
+npx @backstage-idp-plugin/backstage-idp --list
+```
+
+That prints the skills and the install commands. The package is **not** a CLI —
+`npx` exists only so it says so rather than failing with "could not determine
+executable to run". Installing it with `npm i` gets you the markdown on disk,
+which is useful for vendoring or for reading the skills; it does not register
+anything with Claude Code. Use the marketplace commands above for that.
+
+The published package carries a provenance attestation, so you can verify it was
+built by this repository's release workflow rather than uploaded from a laptop:
+
+```bash
+npm audit signatures
+```
 
 ## Your first task
 

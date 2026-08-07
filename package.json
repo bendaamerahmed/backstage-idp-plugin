@@ -1,6 +1,6 @@
 {
   "name": "backstage-idp-marketplace",
-  "version": "1.2.4",
+  "version": "1.3.0",
   "private": true,
   "type": "module",
   "description": "Validation harness and release tooling for the backstage-idp Claude Code plugin. Hosts no runtime code — the plugin itself is markdown.",

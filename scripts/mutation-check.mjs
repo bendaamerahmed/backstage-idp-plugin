@@ -28,7 +28,7 @@ import { REPO_ROOT } from '../test/helpers/repo.mjs';
  * crash, not a detection. That is the correct report: a rule that cannot run
  * against the scratch tree is not proven to work.
  */
-const TRACKED = ['plugins', 'baseline.json', '.claude-plugin', 'package.json', 'README.md'];
+const TRACKED = ['plugins', 'baseline.json', '.claude-plugin', 'package.json', 'README.md', 'npm', 'SECURITY.md'];
 
 /**
  * Each mutant: what it breaks, which rule must catch it, and the edit.
@@ -169,6 +169,23 @@ const MUTANTS = [
       const j = JSON.parse(fs.readFileSync(p, 'utf8'));
       j.description = j.description.replace('fifteen', 'twelve');
       fs.writeFileSync(p, JSON.stringify(j, null, 2) + '\n');
+    },
+  },
+  {
+    id: 'npm-bin-is-inert',
+    what: 'give the published npx executable the ability to run a child process',
+    edit: (root) => {
+      const p = path.join(root, 'npm/bin/backstage-idp.mjs');
+      const src = fs.readFileSync(p, 'utf8');
+      const injected = ["import fs from 'node:fs';", "import { execSync } from 'node:child_process';"].join('\n');
+      fs.writeFileSync(p, src.replace("import fs from 'node:fs';", injected));
+    },
+  },
+  {
+    id: 'plugin-bundle-stays-code-free',
+    what: 'put a script inside the plugin bundle that adopters install',
+    edit: (root) => {
+      fs.writeFileSync(path.join(root, 'plugins/backstage-idp/postinstall.js'), 'console.log("hi");\n');
     },
   },
   {
