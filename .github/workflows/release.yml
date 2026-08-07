@@ -118,9 +118,31 @@ jobs:
 
       - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
         with:
-          node-version: '22'
+          # Node 24, not 22, specifically for this job. npm's trusted publishing
+          # requires "npm CLI version 11.5.1 or later and Node version 22.14.0
+          # or higher" (docs.npmjs.com/trusted-publishers). Node 22 satisfies the
+          # Node floor but bundles npm 10.9.8, which does not support OIDC at
+          # all — the publish fails with an auth error that says nothing about
+          # the npm version. Node 24 bundles npm 11.17.0.
+          node-version: '24'
           registry-url: https://registry.npmjs.org
           cache: npm
+
+      - name: Assert npm is new enough for trusted publishing
+        # Fails with the actual reason rather than letting `npm publish` report a
+        # generic auth error twenty lines later.
+        run: |
+          NPM_VERSION=$(npm --version)
+          echo "npm $NPM_VERSION"
+          node -e '
+            const [maj, min, patch] = process.argv[1].split(".").map(Number);
+            const ok = maj > 11 || (maj === 11 && (min > 5 || (min === 5 && patch >= 1)));
+            if (!ok) {
+              console.error(`npm ${process.argv[1]} cannot use OIDC trusted publishing; 11.5.1+ is required.`);
+              console.error("Either raise node-version, or add: npm install -g npm@latest");
+              process.exit(1);
+            }
+          ' "$NPM_VERSION"
 
       - run: npm ci
 
@@ -144,6 +166,16 @@ jobs:
           echo "$NAME@$VERSION is not yet published; continuing."
 
       - name: Publish
-        run: npm publish ./dist/npm --access public --provenance
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        # No NODE_AUTH_TOKEN. Authentication is OIDC: the npm CLI detects the
+        # trusted-publisher environment and exchanges the workflow's id-token for
+        # a short-lived credential, so there is no long-lived token to leak or
+        # rotate. Setting NODE_AUTH_TOKEN to an unset secret produces an empty
+        # string, which is worse than absent — it looks like a configured token.
+        #
+        # No --provenance either: trusted publishing generates provenance
+        # automatically. Passing the flag as well is redundant and, without a
+        # token, can fail on its own account.
+        #
+        # Requires the trusted publisher on npmjs.com to name THIS file
+        # (release.yml) with "Allow npm publish" enabled.
+        run: npm publish ./dist/npm --access public

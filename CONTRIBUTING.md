@@ -111,7 +111,40 @@ git tag -a v<version> -m "v<version>"
 ```
 
 Pushing the tag triggers the release workflow, which builds the `.plugin`
-artifact, generates notes from `CHANGELOG.md`, attaches the artifact and updates
-the marketplace entry. `check:release-gate` fails while any item in
-`OPEN-DECISIONS.md` is unresolved, so no placeholder can reach a published
-artifact.
+artifact, generates notes from `CHANGELOG.md`, attaches the artifact, updates the
+marketplace entry, and publishes to npm. `check:release-gate` fails while any
+item in `OPEN-DECISIONS.md` is unresolved, so no placeholder can reach a
+published artifact.
+
+### npm publishing
+
+The package is `@backstage-idp-plugin/backstage-idp`, published by **OIDC trusted
+publishing** — there is no `NPM_TOKEN` secret and nothing to rotate. The npm
+registry trusts a specific workflow file in a specific repository, and each
+publish uses a short-lived credential that cannot be extracted or reused.
+
+Configured on npmjs.com under the package's Settings → Trusted Publisher:
+
+| Field | Value |
+| :--- | :--- |
+| Publisher | GitHub Actions |
+| Organization or user | `bendaamerahmed` |
+| Repository | `backstage-idp-plugin` |
+| Workflow filename | `release.yml` |
+| Environment name | *(empty)* |
+| Allowed actions | `Allow npm publish` |
+
+Two constraints that are easy to get wrong:
+
+- **npm must be 11.5.1 or later and Node 22.14.0 or later.** Node 22 clears the
+  Node floor but bundles npm 10.9.8, which cannot do OIDC at all — and the
+  failure is a generic auth error that says nothing about the npm version. The
+  npm job therefore runs on Node 24 and asserts the npm version explicitly
+  before it tries to publish.
+- **Do not add `NODE_AUTH_TOKEN` or `--provenance`.** The CLI detects the OIDC
+  environment on its own, and provenance is generated automatically. An unset
+  `NPM_TOKEN` secret expands to an empty string, which reads as a configured
+  token and fails more confusingly than having none.
+
+If `Environment name` is ever filled in on npmjs.com, the `npm` job must also
+declare a matching `environment:` or every publish will be rejected.
