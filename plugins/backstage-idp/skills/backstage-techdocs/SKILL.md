@@ -35,7 +35,6 @@ Wire the docs-like-code pipeline correctly, and tell apart the four places it br
      - Home: index.md
    plugins:
      - techdocs-core
-
    ```
 
    `techdocs-core` is injected automatically when absent unless `techdocs.generator.mkdocs.omitTechdocsCorePlugin: true`. Rename `docs/` only via mkdocs' own `docs_dir` key. `nav` is optional — omitting it makes MkDocs infer navigation from the file tree.
@@ -51,7 +50,6 @@ Wire the docs-like-code pipeline correctly, and tell apart the four places it br
    npx @techdocs/cli generate --no-docker --source-dir . --output-dir ./site --etag "$COMMIT_SHA"
    npx @techdocs/cli publish --publisher-type awsS3 --storage-name "$TECHDOCS_S3_BUCKET_NAME" \
      --entity default/Component/my-component --directory ./site
-
    ```
 
    - `--entity` is the `<namespace>/<kind>/<name>` triplet and must match the catalog entity exactly; it determines the storage path the backend later reads.

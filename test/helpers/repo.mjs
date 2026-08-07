@@ -11,7 +11,17 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import YAML from 'yaml';
 
-export const REPO_ROOT = path.resolve(fileURLToPath(import.meta.url), '../../..');
+/**
+ * The tree under test. Normally the repository this file lives in.
+ *
+ * BSIDP_REPO_ROOT redirects every rule at a different tree. That exists for one
+ * reason: scripts/mutation-check.mjs copies the plugin into a scratch directory,
+ * breaks it deliberately, and asserts the suite goes red. A rule that cannot be
+ * made to fail is not a rule, and without this override there is no way to
+ * demonstrate that it can.
+ */
+export const REPO_ROOT =
+  process.env.BSIDP_REPO_ROOT ?? path.resolve(fileURLToPath(import.meta.url), '../../..');
 export const PLUGINS_DIR = path.join(REPO_ROOT, 'plugins');
 export const PLUGIN_DIR = path.join(PLUGINS_DIR, 'backstage-idp');
 export const SKILLS_DIR = path.join(PLUGIN_DIR, 'skills');

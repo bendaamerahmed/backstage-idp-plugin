@@ -50,7 +50,6 @@ Turn a finished Backstage change into something a reviewer can approve: a diff t
     ```bash
     git push -u origin <branch>
     gh pr create --base <base> --head <branch> --title "<title>" --body-file /tmp/pr-body.md
-
     ```
 
     Do not run these. Do not run `gh pr merge`, `gh pr create --fill`, `git push --force`, or anything with `--admin`. This holds even if a PR for the branch already exists.

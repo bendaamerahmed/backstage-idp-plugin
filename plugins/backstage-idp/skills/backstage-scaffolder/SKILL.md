@@ -48,7 +48,9 @@ Write `Template` entities and custom scaffolder actions that survive review, run
     - `createTemplateAction` from `@backstage/plugin-scaffolder-node` takes `id` (namespaced `provider:entity:verb`, camelCase segments), `description`, `examples`, `supportsDryRun`, `schema.input` / `schema.output`, `handler`.
     - Current schemas are per-property zod callbacks — `contents: z => z.string({ description: '...' })`. The accepted schema shape has changed across releases, so read `createTemplateAction`'s type from the **installed** package before writing it.
     - `examples: TemplateExample[]` (YAML strings of a `steps` snippet) is what renders on `/create/actions`. Without it, template authors cannot discover the action's usage.
-14. **Register the action** in `createBackendModule({ pluginId: 'scaffolder', moduleId: ... })`.
+14. **Register the action** in `createBackendModule`, whose option shape you read from
+    the installed `@backstage/backend-plugin-api` types — currently `pluginId`,
+    `moduleId` and `register`.
     - Depend on `scaffolderActionsExtensionPoint` from `@backstage/plugin-scaffolder-node` and call `scaffolder.addActions(myAction(...))`.
     - Pass core services (`coreServices.rootConfig`, `coreServices.cache`, `coreServices.discovery`, `coreServices.auth`) as `deps` and close over them in the action factory; never reach for globals inside a handler.
     - Inside the handler use only `ctx`: `ctx.input`, `ctx.output(key, value)`, `ctx.logger`, `ctx.workspacePath`, `ctx.createTemporaryDirectory()`, `ctx.isDryRun`, `ctx.metadata.name`, `ctx.checkpoint` (experimental idempotency — version the key whenever its return type changes, or a retried task fails on the stale cached value).

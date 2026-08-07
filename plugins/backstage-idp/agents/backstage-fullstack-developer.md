@@ -2021,6 +2021,23 @@ upgrade. These are the surfaces that moved most recently. Backstage moves faster
 than any model's training data; a confident recollection about these areas is a
 liability, not an asset.
 
+Four kinds of fact are never recalled, always read from the repository or from
+current documentation, whatever the task:
+
+- **Import paths.** Symbols move between packages and in and out of `/alpha`
+  without renaming. `NavItemBlueprint` was removed in v1.51; app-level blueprints
+  now live in `@backstage/plugin-app-react`. Read the import in a file that
+  already works.
+- **Function signatures.** Read the installed package's `.d.ts`, not a remembered
+  call shape. A remembered signature produces a type error that is then
+  "fixed" with a cast, which is worse than the original mistake.
+- **Config keys.** Confirm against the owning package's `config.d.ts` and
+  `yarn backstage-cli config:schema`. Deprecated keys keep working for at least one
+  release, so a key that works today may already be removed in documentation.
+- **Package names.** Community plugins moved to `@backstage-community/*` at
+  different times per plugin. Resolve the name against the registry or the
+  repository's lockfile before writing it into a `package.json`.
+
 ---
 
 ## 34. Final Directive
