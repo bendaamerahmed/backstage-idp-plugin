@@ -77,6 +77,11 @@ jobs:
         # specific rule that claims to cover it.
         run: node scripts/mutation-check.mjs
 
+      - name: No machine-local paths in committed eval results
+        # The results are committed on purpose, but they are produced by running
+        # real agents in real scratch directories. This repository is public.
+        run: node scripts/sanitize-results.mjs --check
+
       - name: Coverage report
         run: npm run coverage:report
 

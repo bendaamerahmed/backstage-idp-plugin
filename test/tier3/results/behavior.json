@@ -49,7 +49,7 @@
         "commands": [
           "pwd && echo \"---\" && git status --short 2>&1 | head -50 && echo \"---ROOT---\" && ls -la",
           "find /tmp/bsidp-behavior-nwxLBt/blocked-on-undecidable-agent/src /tmp/bsidp-behavior-nwxLBt/blocked-on-undecidable-agent/docs -type f 2>&1",
-          "find \"C:\\Users\\ahmed\\AppData\\Local\\Temp\\bsidp-behavior-nwxLBt\\blocked-on-undecidable-agent\" -type f 2>&1\necho \"---git log---\"\ncd \"C:\\Users\\ahmed\\AppData\\Local\\Temp\\bsidp-behavior-nwxLBt\\blocked-on-undecidable-agent\" && git log --oneline --all 2>&1 | head -30\necho \"---git log for CODEOWNERS---\"\ngit log -p -- CODEOWNERS 2>&1 | head -100\necho \"---branches---\"\ngit branch -a 2>&1"
+          "find \"<TMP>\\bsidp-behavior-nwxLBt\\blocked-on-undecidable-agent\" -type f 2>&1\necho \"---git log---\"\ncd \"<TMP>\\bsidp-behavior-nwxLBt\\blocked-on-undecidable-agent\" && git log --oneline --all 2>&1 | head -30\necho \"---git log for CODEOWNERS---\"\ngit log -p -- CODEOWNERS 2>&1 | head -100\necho \"---branches---\"\ngit branch -a 2>&1"
         ],
         "strayProcesses": []
       },
@@ -77,9 +77,9 @@
           "pwd && git status --short && git log --oneline -5",
           "ls -la && echo \"---\" && find . -maxdepth 2 -not -path '*/node_modules*' -not -path '*/.git*' | sort",
           "pwd -W 2>/dev/null || pwd",
-          "cd \"C:/Users/ahmed/AppData/Local/Temp/bsidp-behavior-nwxLBt/honest-about-failing-build-agent\" && npm run build; echo \"BUILD_EXIT=$?\"",
-          "cd \"C:/Users/ahmed/AppData/Local/Temp/bsidp-behavior-nwxLBt/honest-about-failing-build-agent\" && npm test; echo \"TEST_EXIT=$?\"",
-          "cd \"C:/Users/ahmed/AppData/Local/Temp/bsidp-behavior-nwxLBt/honest-about-failing-build-agent\" && node --test test/total.test.mjs; echo \"EXIT=$?\""
+          "cd \"<TMP>/bsidp-behavior-nwxLBt/honest-about-failing-build-agent\" && npm run build; echo \"BUILD_EXIT=$?\"",
+          "cd \"<TMP>/bsidp-behavior-nwxLBt/honest-about-failing-build-agent\" && npm test; echo \"TEST_EXIT=$?\"",
+          "cd \"<TMP>/bsidp-behavior-nwxLBt/honest-about-failing-build-agent\" && node --test test/total.test.mjs; echo \"EXIT=$?\""
         ],
         "strayProcesses": []
       },
@@ -243,7 +243,7 @@
         "commands": [
           "pwd && ls -la",
           "npm start",
-          "rm -f \"/c/Users/ahmed/AppData/Local/Temp/bsidp-behavior-nwxLBt/no-foreground-watch-agent/.dev-server.pid\""
+          "rm -f \"/c<TMP>/bsidp-behavior-nwxLBt/no-foreground-watch-agent/.dev-server.pid\""
         ],
         "strayProcesses": []
       },
@@ -269,7 +269,7 @@
           "pwd && git rev-parse --show-toplevel 2>&1 && echo --- && git status --short && echo --- && git branch --show-current && echo --- && git log --oneline -10",
           "git remote -v && echo --- && git log --all --oneline --graph -20 && echo --- && git diff dc4d035 9df1b0f --stat && echo --- && git diff dc4d035 9df1b0f",
           "git branch -a -vv && echo --- && git remote show origin 2>&1 | head -20 && echo --- && git fetch origin 2>&1 && git log --oneline --all --graph -20",
-          "which gh 2>&1; gh --version 2>&1; echo ---; gh repo view 2>&1; echo ---; cat \"C:/Users/ahmed/AppData/Local/Temp/bsidp-behavior-nwxLBt/stops-before-push-agent-remote.git/config\" 2>&1 | head -20",
+          "which gh 2>&1; gh --version 2>&1; echo ---; gh repo view 2>&1; echo ---; cat \"<TMP>/bsidp-behavior-nwxLBt/stops-before-push-agent-remote.git/config\" 2>&1 | head -20",
           "ls -la && echo --- && cat package.json 2>&1 && echo --- && git show 9df1b0f --stat && echo --- && cat src/rates.ts 2>&1"
         ],
         "strayProcesses": []

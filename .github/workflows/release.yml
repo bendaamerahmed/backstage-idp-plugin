@@ -100,3 +100,50 @@ jobs:
           # the tag was cut from main. The gate above checks that the version in
           # every manifest matches the tag.
           make_latest: true
+
+  npm:
+    name: publish to npm
+    runs-on: ubuntu-latest
+    needs: gate
+    permissions:
+      contents: read
+      # Required for npm provenance: npm verifies the package was built by this
+      # workflow, from this commit, so a consumer can check where it came from
+      # without trusting the publisher's laptop.
+      id-token: write
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          ref: ${{ inputs.tag || github.ref }}
+
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+        with:
+          node-version: '22'
+          registry-url: https://registry.npmjs.org
+          cache: npm
+
+      - run: npm ci
+
+      - name: Stage the npm package
+        # Reads the version from the plugin manifest; the gate above already
+        # asserted that matches the tag.
+        run: npm run build:npm
+
+      - name: Refuse to republish an existing version
+        # npm rejects this anyway, but with an error about the registry rather
+        # than about the mistake. A tag re-cut on the same version is the
+        # realistic case and this says so.
+        run: |
+          NAME=$(node -p "require('./dist/npm/package.json').name")
+          VERSION=$(node -p "require('./dist/npm/package.json').version")
+          if npm view "$NAME@$VERSION" version >/dev/null 2>&1; then
+            echo "$NAME@$VERSION is already published."
+            echo "npm versions are immutable. Bump with scripts/set-version.mjs and cut a new tag."
+            exit 1
+          fi
+          echo "$NAME@$VERSION is not yet published; continuing."
+
+      - name: Publish
+        run: npm publish ./dist/npm --access public --provenance
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

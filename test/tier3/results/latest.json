@@ -1,7 +1,7 @@
 {
   "generatedOn": "2026-08-07T00:58:46.450Z",
   "model": "claude-sonnet-5",
-  "cli": "C:/Users/ahmed/.local/bin/claude",
+  "cli": "<HOME>/.local/bin/claude",
   "inputHash": "c0f068be4351d52d",
   "caseCount": 167,
   "repeats": 3,

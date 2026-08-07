@@ -220,3 +220,20 @@ test('claude plugin validate exits zero', (t) => {
 });
 
 export { SEMVER, KEBAB, readRaw };
+
+test('the npm package identity matches the plugin identity', async () => {
+  const { NPM_NAME, NPM_SCOPE } = await import('../../scripts/build-npm-package.mjs');
+  checkRule(
+    'npm-name-matches-plugin',
+    'the npm package name is `<scope>/<plugin name>`, so npm, the marketplace and `/plugin install` all use one identity',
+    'Two names for one artifact means an adopter who finds it on npm cannot tell whether it is the same thing they were told to install, and a rename on one side is invisible on the other. The npm version is read from plugin.json for the same reason.',
+    (r) => {
+      const manifest = readJson(PLUGIN_MANIFEST);
+      r.require(NPM_NAME === `${NPM_SCOPE}/${manifest.name}`, 'scripts/build-npm-package.mjs', {
+        found: `npm name "${NPM_NAME}" vs plugin name "${manifest.name}" under scope "${NPM_SCOPE}"`,
+        expected: `${NPM_SCOPE}/${manifest.name}`,
+        fix: 'change both or neither — the build script refuses to stage a package when they disagree',
+      });
+    },
+  );
+});

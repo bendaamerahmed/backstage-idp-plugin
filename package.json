@@ -28,7 +28,9 @@
     "check:release-gate": "node scripts/release-gate.mjs",
     "coverage:report": "node scripts/coverage-report.mjs",
     "evals:behavior": "node scripts/run-behavior-evals.mjs",
-    "evals:all": "npm run evals && npm run evals:behavior"
+    "evals:all": "npm run evals && npm run evals:behavior",
+    "build:npm": "node scripts/build-npm-package.mjs",
+    "sanitize:results": "node scripts/sanitize-results.mjs"
   },
   "devDependencies": {
     "markdownlint-cli2": "0.23.2",
