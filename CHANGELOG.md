@@ -12,6 +12,37 @@ result — in which case the content change is what is listed.
 
 ## [Unreleased]
 
+## [1.2.1] - 2026-08-07
+
+No change to the plugin. The agent definition and all fifteen skills are
+byte-identical to 1.2.0 — this release exists to make the published artifact
+verifiable and to fix a release pipeline that had never run green.
+
+### Security
+
+- npm publishing moved to **OIDC trusted publishing**. There is no longer an
+  `NPM_TOKEN` secret anywhere: the registry trusts one workflow file in one
+  repository, and each publish uses a short-lived credential that cannot be
+  extracted or reused. The practical gain for an adopter is that the package now
+  carries a provenance attestation, so you can verify it was built by this
+  workflow from this commit rather than uploaded from someone's laptop.
+
+### Fixed
+
+- The npm publish job ran on Node 22, which clears npm's documented Node floor
+  for trusted publishing but bundles npm 10.9.8 — a version that cannot do OIDC
+  at all, and fails with a generic auth error naming nothing useful. The job now
+  runs on Node 24 and asserts `npm >= 11.5.1` before attempting to publish, so a
+  future regression names its own cause.
+- `npm run test:fast` — documented in the README and CONTRIBUTING as the
+  sub-ten-second tier — had never worked. Every per-tier script used the
+  bare-directory form (`node --test test/tier0/`), which fails on Windows and,
+  as the first CI run proved, on Linux. All six scripts now use the portable
+  glob form, and a new Tier 0 rule (`test-scripts-are-portable`) with its own
+  mutant stops it recurring. A documented command that does not run is worse
+  than a missing one: it is the first thing a new contributor types, and the
+  failure looks like their environment rather than our packaging.
+
 ## [1.2.0] - 2026-08-07
 
 The first version published to npm, as
@@ -141,7 +172,8 @@ researched against official Backstage documentation. Never executed, never
 tested, no release process. Recorded here for completeness — see
 `archive/HARDENING-REPORT.md` for the review that preceded it.
 
-[Unreleased]: https://github.com/bendaamerahmed/backstage-idp-plugin/compare/v1.2.0...HEAD
+[Unreleased]: https://github.com/bendaamerahmed/backstage-idp-plugin/compare/v1.2.1...HEAD
+[1.2.1]: https://github.com/bendaamerahmed/backstage-idp-plugin/releases/tag/v1.2.1
 [1.2.0]: https://github.com/bendaamerahmed/backstage-idp-plugin/releases/tag/v1.2.0
 [1.1.0]: https://github.com/bendaamerahmed/backstage-idp-plugin/releases/tag/v1.1.0
 [1.0.0]: https://github.com/bendaamerahmed/backstage-idp-plugin/releases/tag/v1.0.0

@@ -6,14 +6,14 @@
   },
   "metadata": {
     "description": "Backstage internal-developer-platform engineering plugins for Claude Code.",
-    "version": "1.2.0"
+    "version": "1.2.1"
   },
   "plugins": [
     {
       "name": "backstage-idp",
       "source": "./plugins/backstage-idp",
       "description": "Autonomous full-stack engineering for Spotify Backstage developer portals: one senior subagent plus twelve verified Backstage workflow skills.",
-      "version": "1.2.0",
+      "version": "1.2.1",
       "author": {
         "name": "ahmed ben"
       },
