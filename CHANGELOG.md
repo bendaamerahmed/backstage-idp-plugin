@@ -12,6 +12,33 @@ result — in which case the content change is what is listed.
 
 ## [Unreleased]
 
+### Added
+
+- `backstage-theming` — brand colours, logos and typography across the portal,
+  covering both theme systems that coexist on a current line: `@backstage/ui`
+  CSS custom properties and the Material UI unified theme. Most theming bugs are
+  one being styled and the other not, so the skill leads with deciding which
+  surface you are changing.
+- `backstage-kubernetes` — cluster locators, auth, entity annotations, and
+  surfacing your own CRDs through `kubernetes.customResources`. Four independent
+  things must line up for the tab to populate and all four fail identically, so
+  the procedure starts by querying the backend directly to tell them apart.
+- `kubernetes-crd-author` — CRD API design, kubebuilder scaffolding, validation
+  markers, idempotent reconcile loops, versioning and envtest. Treats a CRD as a
+  published API, because once an object is stored the schema cannot be changed
+  cheaply.
+- Tier 4 scenario pinning the Kubernetes config surface against the published
+  `@backstage/plugin-kubernetes-backend` schema, and a Tier 2 currency check on
+  the same values. `customResources` taking exactly `group`/`apiVersion`/`plural`
+  is worth pinning: getting it wrong is a silent no-match, not an error.
+- npm packaging under `@backstage-idp-plugin/backstage-idp`, published from a
+  staging directory so the plugin bundle stays content-only, with the version
+  read from the plugin manifest and the name asserted to match it.
+
+### Security
+
+- Committed eval results are sanitised of machine-local paths, checked in CI.
+
 ## [1.1.0] - 2026-08-07
 
 The first release with any verification behind it. 1.0.0 was hand-authored and

@@ -1,7 +1,7 @@
 # Backstage IDP Engineering
 
 An autonomous senior engineer for Spotify Backstage developer portals, plus the
-twelve workflow skills it calls.
+fifteen workflow skills it calls.
 
 Verified against Backstage **v1.53.x**, August 2026.
 
@@ -14,8 +14,8 @@ not. It owns architecture through to production-readiness: frontend and backend
 plugins, Software Catalog, Scaffolder, TechDocs, Search, auth, permissions,
 integrations, upgrades, debugging, CI/CD.
 
-**Twelve skills**, each verified against official Backstage documentation rather
-than written from model memory:
+**Fifteen skills**, each verified against official Backstage documentation and,
+where the fact is machine-checkable, against a real Backstage repository:
 
 | Skill | Use it for |
 | :--- | :--- |
@@ -31,6 +31,9 @@ than written from model memory:
 | `backstage-quality-gate` | The validation sweep before calling anything done |
 | `backstage-incident-debug` | Production failures, evidence-first |
 | `pull-request-ready` | Diff self-review and PR authoring |
+| `backstage-theming` | Brand colours, logos, BUI tokens, light and dark |
+| `backstage-kubernetes` | Cluster wiring, entity annotations, surfacing your CRDs |
+| `kubernetes-crd-author` | CRD API design, kubebuilder, reconcile loops |
 
 ## Install
 

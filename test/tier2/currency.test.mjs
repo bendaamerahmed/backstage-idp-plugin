@@ -32,6 +32,13 @@ process.on('exit', () => {
   fs.writeFileSync(FINDINGS_FILE, JSON.stringify({ generatedOn: new Date().toISOString(), findings }, null, 2) + '\n');
 });
 
+/**
+ * A newline constant. Findings are multi-line, and the escape sequence has been
+ * mangled twice by tooling that rewrote this file; naming it removes the
+ * opportunity.
+ */
+const NEWLINE = String.fromCharCode(10);
+
 /** "1.53" -> 153, so lines can be compared and subtracted. */
 function lineOrdinal(line) {
   const [maj, min] = String(line).split('.').map(Number);
@@ -222,6 +229,10 @@ test('every config key the plugin names appears in the published config schema',
     backend: '@backstage/backend-defaults',
     catalog: '@backstage/plugin-catalog-backend',
     integrations: '@backstage/integration',
+    kubernetes: '@backstage/plugin-kubernetes-backend',
+    // `organization.name` is read by the app shell, not by a backend plugin —
+    // its schema lives in the app package rather than a plugin's config.d.ts.
+    organization: '@backstage/plugin-app-backend',
     permission: '@backstage/plugin-permission-backend',
     scaffolder: '@backstage/plugin-scaffolder-backend',
     search: '@backstage/plugin-search-backend',
@@ -250,6 +261,66 @@ test('every config key the plugin names appears in the published config schema',
           found: `config root "${root}" (e.g. \`${example?.key}\` at ${example?.firstSeen}) has no known schema-owning package`,
           expected: 'an entry in schemaSources in this test',
           fix: 'add the owning package, or correct the key if the root is a typo',
+        });
+      }
+    },
+  );
+});
+
+test('the Kubernetes plugin still exposes the config surface the skill writes', { timeout: 180_000 }, async () => {
+  const pkgName = '@backstage/plugin-kubernetes-backend';
+  const tags = await npmDistTags(pkgName);
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'bsidp-k8s-'));
+  let schema = null;
+  try {
+    const pkg = await downloadPackage(pkgName, tags.latest, tmp);
+    schema = JSON.parse(fs.readFileSync(path.join(pkg, 'config.schema.json'), 'utf8'));
+  } finally {
+    fs.rmSync(tmp, { recursive: true, force: true });
+  }
+
+  const k = schema.properties?.kubernetes?.properties ?? {};
+  const live = {
+    clusterLocatorMethods: (k.clusterLocatorMethods?.items?.oneOf ?? k.clusterLocatorMethods?.items?.anyOf ?? [])
+      .flatMap((x) => x.properties?.type?.enum ?? [x.properties?.type?.const]).filter(Boolean),
+    serviceLocatorMethods: k.serviceLocatorMethod?.properties?.type?.enum ?? [],
+    customResourcesFields: k.customResources?.items?.required ?? [],
+    objectTypes: k.objectTypes?.items?.enum ?? [],
+  };
+
+  const drift = [];
+  for (const [field, expected] of Object.entries(baseline.kubernetes).filter(([f]) => f in live)) {
+    const gone = expected.filter((v) => !live[field].includes(v));
+    const added = live[field].filter((v) => !expected.includes(v));
+    if (gone.length || added.length) drift.push({ field, gone, added, live: live[field] });
+  }
+
+  if (drift.length) {
+    finding('kubernetes.configSurface', {
+      severity: 'fail',
+      baselineSays: drift.map((d) => `${d.field}: ${baseline.kubernetes[d.field].join(', ')}`).join(' | '),
+      upstreamSays: drift.map((d) => `${d.field}: ${d.live.join(', ')}`).join(' | '),
+      source: `npm:${pkgName}@${tags.latest} config.schema.json`,
+      verifiedOn: baseline.kubernetes.verifiedOn,
+      whatToDo: [
+        ...drift.map(
+          (d) => `${d.field}: removed upstream [${d.gone.join(', ') || 'none'}], new upstream [${d.added.join(', ') || 'none'}]`,
+        ),
+        'Update baseline.kubernetes and the matching step in backstage-kubernetes together. A removed value the skill still names produces a config the adopter cannot load.',
+      ].join(NEWLINE),
+    });
+  }
+
+  checkRule(
+    'kubernetes-config-surface-current',
+    'the cluster locators, service locators, customResources fields and object types the plugin names still exist in the published schema',
+    'backstage-kubernetes tells the agent to write these keys verbatim. A value that was removed upstream fails `config:check --strict` for the whole repository, which reads to an adopter as a broken portal rather than as wrong guidance.',
+    (r) => {
+      for (const d of drift) {
+        r.violation('baseline.json', {
+          found: `kubernetes.${d.field}: baseline has [${baseline.kubernetes[d.field].join(', ')}], upstream has [${d.live.join(', ')}]`,
+          expected: 'the same set',
+          fix: 'update baseline.kubernetes and backstage-kubernetes together, citing the schema version',
         });
       }
     },

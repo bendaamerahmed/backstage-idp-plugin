@@ -68,6 +68,16 @@ const SABOTAGE = {
         fs.writeFileSync(p, fs.readFileSync(p, 'utf8').replace(/^.*@backstage\/ui.*$/m, ''));
       },
     },
+    {
+      id: 'k8s-customresources-shape-changed',
+      what: 'drop a required field from the cached Kubernetes customResources schema',
+      apply: (root) => {
+        const p = path.join(root, '.kubernetes-config.schema.json');
+        const j = JSON.parse(fs.readFileSync(p, 'utf8'));
+        j.properties.kubernetes.properties.customResources.items.required = ['group', 'plural'];
+        fs.writeFileSync(p, JSON.stringify(j, null, 2));
+      },
+    },
   ],
   legacy: [
     {

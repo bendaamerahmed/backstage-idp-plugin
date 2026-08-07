@@ -217,6 +217,66 @@ export const SCENARIOS = [
     },
   },
   {
+    id: 'kubernetes-config-surface',
+    skill: 'backstage-kubernetes',
+    fixture: 'nfs-current',
+    what: 'the Kubernetes config keys the skill instructs writing exist in the published config schema for the installed plugin version',
+    run: (r) => {
+      // The fixture does not install the Kubernetes plugin, so its schema is
+      // fetched from the registry rather than from node_modules. That keeps the
+      // assertion honest: it checks the version an adopter would install, not a
+      // version this fixture happens to pin.
+      const cached = path.join(FIXTURES_DIR, 'nfs-current', '.kubernetes-config.schema.json');
+      if (!fs.existsSync(cached)) {
+        r.violation('fixtures/nfs-current', {
+          found: 'no cached kubernetes config schema',
+          expected: '.kubernetes-config.schema.json alongside the fixture',
+          fix: 'run `node scripts/fixtures/fetch-kubernetes-schema.mjs` — the fixture build does this, so a missing file means the fixture predates the scenario',
+        });
+        return;
+      }
+      const schema = JSON.parse(fs.readFileSync(cached, 'utf8'));
+      const k = schema.properties?.kubernetes?.properties ?? {};
+
+      for (const key of ['clusterLocatorMethods', 'serviceLocatorMethod', 'customResources', 'objectTypes']) {
+        r.require(k[key] !== undefined, 'plugins/backstage-idp/skills/backstage-kubernetes/SKILL.md', {
+          found: `kubernetes.${key} is not in the published config schema`,
+          expected: 'the key the skill tells the agent to write',
+          fix: 'the plugin moved; re-verify the skill against the installed config.schema.json',
+        });
+      }
+
+      // The skill states customResources takes exactly group/apiVersion/plural,
+      // all required, and that apiVersion is the version alone. Getting this
+      // wrong is a silent no-match rather than an error, so it is worth pinning.
+      const cr = k.customResources?.items?.required ?? [];
+      r.require(
+        ['group', 'apiVersion', 'plural'].every((f) => cr.includes(f)) && cr.length === 3,
+        'plugins/backstage-idp/skills/backstage-kubernetes/SKILL.md',
+        {
+          found: `customResources required fields: [${cr.join(', ')}]`,
+          expected: 'exactly group, apiVersion, plural',
+          fix: 'step 7 of backstage-kubernetes enumerates these; update it and this assertion together',
+        },
+      );
+
+      // objectTypes is an enum, and the skill lists it. A value the skill names
+      // that the schema rejects would fail config:check for the adopter.
+      const objectTypes = k.objectTypes?.items?.enum ?? [];
+      const skillText = fs.readFileSync(
+        path.join(REPO_ROOT, 'plugins/backstage-idp/skills/backstage-kubernetes/SKILL.md'),
+        'utf8',
+      );
+      for (const named of [...skillText.matchAll(/`(pods|services|configmaps|deployments|statefulsets|daemonsets|ingresses|jobs|cronjobs|replicasets|horizontalpodautoscalers|limitranges|resourcequotas|customresources)`/g)]) {
+        r.require(objectTypes.includes(named[1]), 'plugins/backstage-idp/skills/backstage-kubernetes/SKILL.md', {
+          found: `the skill names objectType "${named[1]}", which the schema does not accept`,
+          expected: `one of: ${objectTypes.join(', ')}`,
+          fix: 'remove it, or update the list if the schema gained it under a different name',
+        });
+      }
+    },
+  },
+  {
     id: 'legacy-fixture-is-actually-legacy',
     skill: 'backstage-repo-discovery',
     fixture: 'legacy',

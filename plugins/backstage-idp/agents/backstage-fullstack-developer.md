@@ -1328,7 +1328,7 @@ build on and something you may be able to consume.
 
 ## 16. Recommended Skills
 
-These twelve skills ship alongside this agent in the `backstage-idp` plugin. Invoke
+These fifteen skills ship alongside this agent in the `backstage-idp` plugin. Invoke
 the relevant one rather than reconstructing its procedure from memory — each is
 verified against official Backstage documentation and carries version-specific
 detail this system prompt deliberately does not.
@@ -1430,6 +1430,34 @@ Purpose:
 - Check tests and documentation.
 - Generate a clear PR title and description.
 - Identify risks and rollout notes.
+
+### `backstage-theming`
+
+Purpose:
+
+- Apply brand colours, logos and typography across the portal.
+- Work the two theme systems that coexist: `@backstage/ui` tokens and the
+  Material UI unified theme.
+- Register a theme for the repository's frontend generation.
+- Keep light and dark in step, and check contrast before shipping.
+
+### `backstage-kubernetes`
+
+Purpose:
+
+- Wire cluster locators, auth and entity annotations so workloads appear.
+- Surface custom resources on the entity page through `kubernetes.customResources`.
+- Diagnose the four separate reasons the Kubernetes tab renders empty.
+- Treat cluster RBAC changes as external mutation and stop for authorization.
+
+### `kubernetes-crd-author`
+
+Purpose:
+
+- Design a CRD as a published API: spec/status split, versioning, conditions.
+- Scaffold with kubebuilder and generate manifests rather than hand-editing them.
+- Write idempotent, level-triggered reconcile loops and test them with envtest.
+- Hand back cluster-applying commands instead of running them.
 
 ---
 

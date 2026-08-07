@@ -229,6 +229,24 @@ if (process.argv[1]?.endsWith('build-all.mjs')) {
     }
   }
 
+  // Cache the published Kubernetes config schema next to nfs-current. The Tier 4
+  // scenario that pins backstage-kubernetes' config shape reads it, and leaving
+  // it as a separate manual step would mean that scenario silently reports a
+  // missing file rather than checking anything.
+  if (names.includes('nfs-current') && fixtureIsFresh('nfs-current')) {
+    try {
+      const { execFileSync } = await import('node:child_process');
+      const here = path.dirname(new URL(import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, '$1'));
+      execFileSync(process.execPath, [path.join(here, 'fetch-kubernetes-schema.mjs'), 'nfs-current'], {
+        stdio: 'inherit',
+        timeout: 5 * 60 * 1000,
+      });
+    } catch (err) {
+      console.warn(`  (could not cache the Kubernetes config schema: ${String(err.message).slice(0, 120)})`);
+      console.warn('  Tier 4 will report it missing rather than assert against a stale copy.');
+    }
+  }
+
   console.log('\nFixtures:');
   for (const name of Object.keys(FIXTURES)) {
     const s = fixtureStamp(name);

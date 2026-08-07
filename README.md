@@ -1,7 +1,7 @@
 # backstage-idp
 
 A Claude Code plugin for teams running [Spotify Backstage](https://backstage.io).
-One senior engineering subagent and twelve workflow skills, continuously checked
+One senior engineering subagent and fifteen workflow skills, continuously checked
 against the release line Backstage is actually on.
 
 ## What it does
@@ -13,7 +13,7 @@ which frontend and backend system generation you are on, implements the change,
 runs your repository's own validation commands, and reports what passed, what
 failed, and what it assumed.
 
-The twelve skills are the procedures it follows:
+The fifteen skills are the procedures it follows:
 
 | Skill | For |
 | :--- | :--- |
@@ -29,6 +29,9 @@ The twelve skills are the procedures it follows:
 | `backstage-quality-gate` | The validation sweep, reported honestly |
 | `backstage-incident-debug` | A deployed instance is failing and nobody knows which layer |
 | `pull-request-ready` | Diff self-review, changesets, PR authoring |
+| `backstage-theming` | Brand colours, logos, BUI tokens, the two theme systems |
+| `backstage-kubernetes` | Cluster wiring, entity annotations, surfacing your CRDs |
+| `kubernetes-crd-author` | CRD API design, kubebuilder scaffolding, reconcile loops |
 
 ## Install
 

@@ -16,7 +16,7 @@ real result files rather than from this prose.
 | 1 — content invariants | The authoring contract holds; named packages and links are live | Nothing about whether a procedure works |
 | 2 — currency | Version-sensitive claims still agree with upstream | Only the claims recorded in `baseline.json` |
 | 3 — behavioural | Which skill fires, and how the agent behaves under adversarial input | Not whether the skill's procedure produces working code |
-| 4 — integration | Facts asserted against a real monorepo, judged by its own toolchain | Only the scenarios written so far — currently four |
+| 4 — integration | Facts asserted against a real monorepo, judged by its own toolchain | Only the scenarios written so far — currently five |
 
 ## Per-skill coverage
 
@@ -34,10 +34,13 @@ real result files rather than from this prose.
 | `backstage-quality-gate` | 10 + 1 near-miss | 1 | **partial** — the fixture's own `tsc` is run |
 | `backstage-incident-debug` | 10 + 1 near-miss | 0 | **no** |
 | `pull-request-ready` | 10 + 1 near-miss | 0 | **no** |
+| `backstage-theming` | 10 + 1 near-miss | 0 | **no** |
+| `backstage-kubernetes` | 10 + 3 near-miss | 1 | **partial** — the config surface it writes is pinned against the published schema |
+| `kubernetes-crd-author` | 10 + 1 near-miss | 0 | **no** |
 
 ### The largest gap, stated plainly
 
-**Nine of twelve skills have no scenario that executes their procedure.** The
+**Eleven of fifteen skills have no scenario that executes their procedure.** The
 Tier 4 scenarios written so far verify the *premises* the skills rest on — the
 release line, the Node majors, the script list, NFS being the default, BUI being
 in the template, `--legacy` still producing a legacy app — not their *outputs*.
@@ -58,10 +61,13 @@ The scenarios named in the brief that are not yet implemented:
 | Prepare a PR, assert changeset present and nothing pushed | `pull-request-ready` | Partially covered by the Tier 3 `stops-before-push` scenario |
 | TechDocs build and publish to a local publisher | `backstage-techdocs` | Needs Python and mkdocs in the container |
 | Configure an auth provider, assert the redirect is reached | `backstage-auth` | Needs a stub IdP |
+| Apply a theme, assert tokens resolve in both modes | `backstage-theming` | Needs a rendered app, so a browser in the container |
+| Surface a CRD end to end, assert the API returns it | `backstage-kubernetes` | Needs a real cluster (kind would do) with a CRD and RBAC applied |
+| Scaffold an operator and reconcile, assert envtest passes | `kubernetes-crd-author` | Needs a Go toolchain and envtest binaries — a different container from the Backstage one |
 
 The harness is built and one real fixture is running against Backstage 1.53.0,
 so each of these is incremental work rather than new infrastructure. Until they
-exist, the honest claim about those nine skills is: **their content is
+exist, the honest claim about those eleven skills is: **their content is
 structurally sound, internally consistent, currently accurate on every fact we
 can machine-check, and triggers correctly — and their procedures have not been
 executed.**

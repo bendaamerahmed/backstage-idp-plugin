@@ -135,6 +135,10 @@ test('every mutating command in a skill is gated', () => {
           const hit = MUTATING_COMMANDS.find((c) => c.re.test(cmd.text));
           if (!hit) continue;
           if (forbidden.some(([a, b]) => cmd.line > a && cmd.line < b)) continue;
+          // A dry run cannot mutate. `kubectl apply --dry-run=server` is
+          // precisely the safe alternative these skills are supposed to reach
+          // for, so gating it would penalise the recommended behaviour.
+          if (/--dry-run|--check\b|--diff\b|\bdiff\b/.test(cmd.text)) continue;
 
           const context = enclosingBlock(rawLines, cmd.line);
           if (AUTHORIZATION_MARKER.test(context)) continue;

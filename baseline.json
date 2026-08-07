@@ -83,9 +83,36 @@
     "replacing": "@material-ui",
     "inDefaultTemplate": true,
     "templateEvidence": "packages/app/src/index.tsx imports '@backstage/ui/css/styles.css'",
-    "source": "npm:@backstage/create-app@0.9.0 templates/default-app/packages/app/src/index.tsx",
+    "source": "npm:@backstage/ui@0.17.0 dist/index.d.ts, dist/provider/BUIProvider.esm.js, dist/css/styles.css; npm:@backstage/theme@0.7.3 dist/index.d.ts",
     "verifiedOn": "2026-08-07",
-    "verifiedBy": "read the shipped template file"
+    "verifiedBy": "read the shipped type declarations and the BUIProvider implementation, not documentation",
+    "version": "0.17.0",
+    "tokenPrefix": "--bui-",
+    "tokenFamilies": [
+      "bg",
+      "fg",
+      "gray",
+      "accent",
+      "border",
+      "radius",
+      "font",
+      "space",
+      "positive",
+      "negative",
+      "warning",
+      "announcement"
+    ],
+    "providerName": "BUIProvider",
+    "providerRole": "supplies the analytics context and, when a router is detected, installs react-aria RouterProvider so BUI navigation resolves client-side",
+    "themePackage": "@backstage/theme",
+    "themePackageVersion": "0.7.3",
+    "themeFactories": [
+      "createUnifiedTheme",
+      "createUnifiedThemeFromV4",
+      "createBaseThemeOptions",
+      "genPageTheme",
+      "UnifiedThemeProvider"
+    ]
   },
   "communityPlugins": {
     "scope": "@backstage-community",
@@ -152,5 +179,64 @@
     "source": "https://backstage.io/sitemap.xml — 572 release pages, none at /docs/releases/",
     "verifiedOn": "2026-08-07",
     "verifiedBy": "fetched the sitemap and probed /docs/releases/ directly; it returns 404"
+  },
+  "kubernetes": {
+    "_note": "Surface the backstage-kubernetes skill instructs writing. Tier 4 pins the customResources shape against the published config schema.",
+    "packages": {
+      "@backstage/plugin-kubernetes": "0.12.21",
+      "@backstage/plugin-kubernetes-backend": "0.21.6",
+      "@backstage/plugin-kubernetes-common": "0.9.12",
+      "@backstage/plugin-kubernetes-react": "0.5.22"
+    },
+    "clusterLocatorMethods": [
+      "config",
+      "catalog",
+      "localKubectlProxy",
+      "gke"
+    ],
+    "serviceLocatorMethods": [
+      "multiTenant",
+      "singleTenant",
+      "catalogRelation"
+    ],
+    "customResourcesFields": [
+      "group",
+      "apiVersion",
+      "plural"
+    ],
+    "objectTypes": [
+      "pods",
+      "services",
+      "configmaps",
+      "deployments",
+      "limitranges",
+      "resourcequotas",
+      "replicasets",
+      "horizontalpodautoscalers",
+      "jobs",
+      "cronjobs",
+      "ingresses",
+      "customresources",
+      "statefulsets",
+      "daemonsets"
+    ],
+    "entityAnnotations": [
+      "backstage.io/kubernetes-id",
+      "backstage.io/kubernetes-label-selector"
+    ],
+    "source": "npm:@backstage/plugin-kubernetes-backend@0.21.6 config.schema.json; npm:@backstage/plugin-kubernetes-common@0.9.12 dist/index.d.ts",
+    "verifiedOn": "2026-08-07",
+    "verifiedBy": "read the published config schema and the exported annotation constants"
+  },
+  "kubebuilder": {
+    "_note": "Toolchain the kubernetes-crd-author skill assumes. These move independently of each other and of Backstage.",
+    "kubebuilder": "v4.15.0",
+    "controllerTools": "v0.21.0",
+    "controllerRuntime": "v0.24.1",
+    "kubernetes": "v1.36.3",
+    "source": "GitHub latest releases for kubernetes-sigs/kubebuilder, kubernetes-sigs/controller-tools, kubernetes-sigs/controller-runtime, kubernetes/kubernetes",
+    "verifiedOn": "2026-08-07",
+    "verifiedBy": "GitHub releases API",
+    "rule": "The skill deliberately tells the agent to read these from PROJECT, Makefile and go.mod rather than assume them. These values are for the currency job, not for the agent."
   }
 }
