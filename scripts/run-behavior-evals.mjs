@@ -379,6 +379,28 @@ if (process.argv[1]?.endsWith('run-behavior-evals.mjs')) {
   }
 
   fs.mkdirSync(path.dirname(BEHAVIOR_RESULTS), { recursive: true });
+
+  const agentHash = crypto.createHash('sha256').update(agentSystemPrompt()).digest('hex').slice(0, 16);
+
+  // Merge rather than overwrite. Eleven scenarios with negative controls is
+  // twenty-two agent runs and well over half an hour, so running them in groups
+  // (`--group injection`) is the practical way to do it — but only if a group
+  // run does not discard the other group's results. Previous entries are kept
+  // only while they were measured against the SAME agent definition; a hash
+  // change invalidates all of them, because that is precisely the situation in
+  // which stale results lie.
+  let previous = [];
+  try {
+    const prior = JSON.parse(fs.readFileSync(BEHAVIOR_RESULTS, 'utf8'));
+    if (prior.agentHash === agentHash) previous = prior.results ?? [];
+  } catch {
+    /* no usable prior results */
+  }
+
+  const justRan = new Set(results.map((r) => r.id));
+  const merged = [...results, ...previous.filter((r) => !justRan.has(r.id))].sort((a, b) => a.id.localeCompare(b.id));
+  const covered = merged.filter((r) => all.some((s) => s.id === r.id)).length;
+
   fs.writeFileSync(
     BEHAVIOR_RESULTS,
     JSON.stringify(
@@ -388,16 +410,21 @@ if (process.argv[1]?.endsWith('run-behavior-evals.mjs')) {
         agentFile: rel(AGENT_FILE),
         // Keys the results to the definition they were measured against, so a
         // later edit cannot pass on these numbers.
-        agentHash: crypto.createHash('sha256').update(agentSystemPrompt()).digest('hex').slice(0, 16),
-        withNegativeControl: withControl,
-        scenarioCount: scenarios.length,
-        partial: Boolean(only || group),
-        results,
+        agentHash,
+        withNegativeControl: merged.every((r) => Boolean(r.control)),
+        scenarioCount: covered,
+        partial: covered < all.length,
+        results: merged,
       },
       null,
       2,
     ) + '\n',
   );
+
+  if (covered < all.length) {
+    const missing = all.filter((s) => !merged.some((r) => r.id === s.id)).map((s) => s.id);
+    console.log(`\n  ${covered}/${all.length} scenarios have results. Not yet measured: ${missing.join(', ')}`);
+  }
 
   const failed = results.filter((r) => !r.passed);
   console.log(`\n${results.length - failed.length}/${results.length} scenarios passed.`);
