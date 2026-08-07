@@ -1,7 +1,7 @@
 ---
 name: backstage-theming
 description: Customize how a Backstage portal looks — BUI design tokens, custom themes, light/dark, branding and logos, component definition overrides, and the two theme systems that coexist.
-when_to_use: 'Any visual or design customization of Backstage. "apply our brand colours", "change the theme", "custom logo", "dark mode is broken", "our sidebar looks wrong", "override a component style", "design tokens", "--bui- variables", "the theme does not apply to some pages", "add a custom homepage", "white-label our portal", createUnifiedTheme, ThemeBlueprint, BUIProvider.'
+when_to_use: 'How the portal LOOKS, without changing which components a plugin imports. "apply our brand colours", "change the theme", "custom logo", "dark mode is broken", "the theme does not apply to some pages", "override a component style", "design tokens", "--bui- variables", "white-label our portal", createUnifiedTheme, ThemeBlueprint, contrast and accessibility of the palette. Replacing Material UI components with @backstage/ui components is a migration, not theming — use backstage-plugin-migrate for that.'
 ---
 
 # Backstage theming and design

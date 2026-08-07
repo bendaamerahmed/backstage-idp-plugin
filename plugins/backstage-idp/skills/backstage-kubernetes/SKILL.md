@@ -1,7 +1,7 @@
 ---
 name: backstage-kubernetes
 description: Wire the Backstage Kubernetes plugin — cluster locators, auth providers, entity annotations, and surfacing your own CRDs as custom resources on the entity page.
-when_to_use: 'Kubernetes tab empty or missing, "no resources found" for a component, add a cluster to Backstage, show our CRD in Backstage, customResources config, backstage.io/kubernetes-id, kubernetes-label-selector, cluster locator, serviceLocatorMethod, 401 or 403 from a cluster, Backstage cannot see our operator resources, show pods for this service.'
+when_to_use: 'Making Kubernetes objects VISIBLE in the Backstage portal. Kubernetes tab empty or missing, "no resources found" for a component, add a cluster to Backstage, display our existing CRD in Backstage, customResources config, backstage.io/kubernetes-id, kubernetes-label-selector, cluster locator, serviceLocatorMethod, 401 or 403 from a cluster, show pods for this service. Writing or changing the CRD itself — schema, versioning, conversion webhooks, finalizers, controllers — is kubernetes-crd-author. Debugging the workloads themselves — crashloops, OOMKills, scheduling, resource limits — is cluster operations and no skill here covers it.'
 ---
 
 # Backstage Kubernetes

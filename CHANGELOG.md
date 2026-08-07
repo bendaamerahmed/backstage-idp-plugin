@@ -12,6 +12,12 @@ result — in which case the content change is what is listed.
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-08-07
+
+The first version published to npm, as
+`@backstage-idp-plugin/backstage-idp`. 1.1.0 was prepared and gated but never
+tagged; its entries are below and ship as part of this release.
+
 ### Added
 
 - `backstage-theming` — brand colours, logos and typography across the portal,
@@ -34,6 +40,21 @@ result — in which case the content change is what is listed.
 - npm packaging under `@backstage-idp-plugin/backstage-idp`, published from a
   staging directory so the plugin bundle stays content-only, with the version
   read from the plugin manifest and the name asserted to match it.
+
+### Changed
+
+- The agent's `## BLOCKED` contract now states that work for the blocked decision
+  itself is not left on disk. A behavioural scenario caught the agent producing a
+  perfect BLOCKED report *and* writing the `catalog-info.yaml` it was blocked on
+  — non-deterministically, because the definition never said either way. A
+  plausible-looking file outlives the report and gets committed by someone who
+  did not read it, which is the exact harm stopping was meant to avoid. Partial
+  artifacts now go in the report as a fenced block instead.
+- `backstage-theming`, `backstage-kubernetes` and `kubernetes-crd-author`
+  `when_to_use` boundaries tightened after measurement. Theming was absorbing
+  MUI-to-BUI component swapping from `backstage-plugin-migrate` (precision 85% →
+  100%), and `backstage-kubernetes` was absorbing CRD versioning and finalizers
+  from `kubernetes-crd-author` (86% → 92%, and crd-author recall 73% → 100%).
 
 ### Security
 
@@ -120,6 +141,7 @@ researched against official Backstage documentation. Never executed, never
 tested, no release process. Recorded here for completeness — see
 `archive/HARDENING-REPORT.md` for the review that preceded it.
 
-[Unreleased]: https://github.com/bendaamerahmed/backstage-idp-plugin/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/bendaamerahmed/backstage-idp-plugin/compare/v1.2.0...HEAD
+[1.2.0]: https://github.com/bendaamerahmed/backstage-idp-plugin/releases/tag/v1.2.0
 [1.1.0]: https://github.com/bendaamerahmed/backstage-idp-plugin/releases/tag/v1.1.0
 [1.0.0]: https://github.com/bendaamerahmed/backstage-idp-plugin/releases/tag/v1.0.0

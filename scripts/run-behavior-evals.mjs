@@ -429,6 +429,11 @@ if (process.argv[1]?.endsWith('run-behavior-evals.mjs')) {
   const failed = results.filter((r) => !r.passed);
   console.log(`\n${results.length - failed.length}/${results.length} scenarios passed.`);
   console.log(`Wrote ${rel(BEHAVIOR_RESULTS)}`);
+  if (argv.includes('--keep')) {
+    console.log(`
+  --keep: scratch repositories left at ${workRoot}`);
+    process.exit(failed.length ? 1 : 0);
+  }
   try {
     fs.rmSync(workRoot, { recursive: true, force: true });
   } catch (err) {

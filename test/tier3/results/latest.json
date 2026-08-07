@@ -1,29 +1,29 @@
 {
-  "generatedOn": "2026-08-07T00:58:46.450Z",
+  "generatedOn": "2026-08-07T03:58:43.515Z",
   "model": "claude-sonnet-5",
   "cli": "<HOME>/.local/bin/claude",
-  "inputHash": "c0f068be4351d52d",
-  "caseCount": 167,
+  "inputHash": "fb56aa511222d7d5",
+  "caseCount": 209,
   "repeats": 3,
   "partial": false,
-  "durationSeconds": 689,
+  "durationSeconds": 1010,
   "errors": [],
   "predictions": {
     "disc-01": "backstage-repo-discovery",
-    "disc-02": "backstage-repo-discovery",
+    "disc-02": "backstage-plugin-migrate",
     "disc-03": "backstage-repo-discovery",
     "disc-04": "backstage-repo-discovery",
     "disc-05": "backstage-repo-discovery",
     "disc-06": "backstage-repo-discovery",
     "disc-07": "backstage-repo-discovery",
-    "disc-08": "backstage-upgrade",
+    "disc-08": "backstage-repo-discovery",
     "disc-09": "backstage-repo-discovery",
     "disc-10": "backstage-repo-discovery",
     "create-01": "backstage-plugin-create",
     "create-02": "backstage-plugin-create",
     "create-03": "backstage-plugin-create",
     "create-04": "backstage-plugin-create",
-    "create-05": null,
+    "create-05": "backstage-plugin-create",
     "create-06": "backstage-plugin-create",
     "create-07": "backstage-plugin-create",
     "create-08": "backstage-plugin-create",
@@ -32,7 +32,7 @@
     "migrate-01": "backstage-plugin-migrate",
     "migrate-02": "backstage-plugin-migrate",
     "migrate-03": "backstage-plugin-migrate",
-    "migrate-04": null,
+    "migrate-04": "backstage-plugin-migrate",
     "migrate-05": "backstage-plugin-migrate",
     "migrate-06": "backstage-plugin-migrate",
     "migrate-07": "backstage-plugin-migrate",
@@ -64,7 +64,7 @@
     "perm-03": "backstage-permissions",
     "perm-04": "backstage-permissions",
     "perm-05": "backstage-permissions",
-    "perm-06": "backstage-permissions",
+    "perm-06": null,
     "perm-07": "backstage-permissions",
     "perm-08": "backstage-permissions",
     "perm-09": "backstage-permissions",
@@ -82,7 +82,7 @@
     "docs-01": "backstage-techdocs",
     "docs-02": "backstage-techdocs",
     "docs-03": "backstage-techdocs",
-    "docs-04": "backstage-techdocs",
+    "docs-04": null,
     "docs-05": "backstage-techdocs",
     "docs-06": "backstage-techdocs",
     "docs-07": "backstage-techdocs",
@@ -98,7 +98,7 @@
     "upg-07": "backstage-upgrade",
     "upg-08": "backstage-upgrade",
     "upg-09": "backstage-upgrade",
-    "upg-10": "backstage-upgrade",
+    "upg-10": null,
     "qg-01": "backstage-quality-gate",
     "qg-02": "backstage-quality-gate",
     "qg-03": "backstage-quality-gate",
@@ -107,13 +107,13 @@
     "qg-06": "backstage-quality-gate",
     "qg-07": "backstage-quality-gate",
     "qg-08": "backstage-quality-gate",
-    "qg-09": null,
+    "qg-09": "backstage-quality-gate",
     "qg-10": "backstage-quality-gate",
     "inc-01": "backstage-incident-debug",
     "inc-02": "backstage-incident-debug",
     "inc-03": "backstage-incident-debug",
     "inc-04": "backstage-incident-debug",
-    "inc-05": "backstage-incident-debug",
+    "inc-05": "backstage-auth",
     "inc-06": "backstage-permissions",
     "inc-07": "backstage-incident-debug",
     "inc-08": "backstage-incident-debug",
@@ -175,15 +175,57 @@
     "neg-32": null,
     "neg-33": null,
     "neg-34": null,
-    "neg-35": null
+    "neg-35": null,
+    "theme-01": "backstage-theming",
+    "theme-02": "backstage-theming",
+    "theme-03": "backstage-theming",
+    "theme-04": "backstage-theming",
+    "theme-05": "backstage-theming",
+    "theme-06": "backstage-theming",
+    "theme-07": "backstage-theming",
+    "theme-08": "backstage-theming",
+    "theme-09": "backstage-theming",
+    "theme-10": "backstage-theming",
+    "k8s-01": "backstage-kubernetes",
+    "k8s-02": "backstage-kubernetes",
+    "k8s-03": "backstage-kubernetes",
+    "k8s-04": "backstage-kubernetes",
+    "k8s-05": "backstage-kubernetes",
+    "k8s-06": "backstage-kubernetes",
+    "k8s-07": "backstage-kubernetes",
+    "k8s-08": "backstage-kubernetes",
+    "k8s-09": "backstage-kubernetes",
+    "k8s-10": "backstage-kubernetes",
+    "crd-01": "kubernetes-crd-author",
+    "crd-02": "kubernetes-crd-author",
+    "crd-03": "kubernetes-crd-author",
+    "crd-04": "kubernetes-crd-author",
+    "crd-05": "kubernetes-crd-author",
+    "crd-06": "kubernetes-crd-author",
+    "crd-07": "kubernetes-crd-author",
+    "crd-08": "kubernetes-crd-author",
+    "crd-09": "kubernetes-crd-author",
+    "crd-10": "kubernetes-crd-author",
+    "near-13": "backstage-theming",
+    "near-14": null,
+    "near-15": "kubernetes-crd-author",
+    "near-16": "backstage-kubernetes",
+    "near-17": "backstage-kubernetes",
+    "near-18": "backstage-incident-debug",
+    "neg-36": null,
+    "neg-37": "backstage-kubernetes",
+    "neg-38": null,
+    "neg-39": null,
+    "neg-40": null,
+    "neg-41": null
   },
   "scores": {
     "perSkill": {
       "backstage-auth": {
         "truePositives": 8,
-        "falsePositives": 0,
+        "falsePositives": 1,
         "falseNegatives": 3,
-        "precision": 1,
+        "precision": 0.8888888888888888,
         "recall": 0.7272727272727273
       },
       "backstage-catalog": {
@@ -196,37 +238,44 @@
       "backstage-incident-debug": {
         "truePositives": 10,
         "falsePositives": 1,
+        "falseNegatives": 2,
+        "precision": 0.9090909090909091,
+        "recall": 0.8333333333333334
+      },
+      "backstage-kubernetes": {
+        "truePositives": 12,
+        "falsePositives": 1,
+        "falseNegatives": 0,
+        "precision": 0.9230769230769231,
+        "recall": 1
+      },
+      "backstage-permissions": {
+        "truePositives": 10,
+        "falsePositives": 1,
         "falseNegatives": 1,
         "precision": 0.9090909090909091,
         "recall": 0.9090909090909091
       },
-      "backstage-permissions": {
+      "backstage-plugin-create": {
         "truePositives": 11,
-        "falsePositives": 1,
+        "falsePositives": 0,
         "falseNegatives": 0,
-        "precision": 0.9166666666666666,
+        "precision": 1,
         "recall": 1
       },
-      "backstage-plugin-create": {
-        "truePositives": 10,
-        "falsePositives": 0,
-        "falseNegatives": 1,
-        "precision": 1,
-        "recall": 0.9090909090909091
-      },
       "backstage-plugin-migrate": {
-        "truePositives": 11,
-        "falsePositives": 0,
+        "truePositives": 12,
+        "falsePositives": 1,
         "falseNegatives": 1,
-        "precision": 1,
-        "recall": 0.9166666666666666
+        "precision": 0.9230769230769231,
+        "recall": 0.9230769230769231
       },
       "backstage-quality-gate": {
-        "truePositives": 10,
+        "truePositives": 11,
         "falsePositives": 0,
-        "falseNegatives": 1,
+        "falseNegatives": 0,
         "precision": 1,
-        "recall": 0.9090909090909091
+        "recall": 1
       },
       "backstage-repo-discovery": {
         "truePositives": 10,
@@ -243,17 +292,31 @@
         "recall": 1
       },
       "backstage-techdocs": {
-        "truePositives": 10,
+        "truePositives": 9,
+        "falsePositives": 0,
+        "falseNegatives": 1,
+        "precision": 1,
+        "recall": 0.9
+      },
+      "backstage-theming": {
+        "truePositives": 11,
         "falsePositives": 0,
         "falseNegatives": 0,
         "precision": 1,
         "recall": 1
       },
       "backstage-upgrade": {
+        "truePositives": 10,
+        "falsePositives": 0,
+        "falseNegatives": 1,
+        "precision": 1,
+        "recall": 0.9090909090909091
+      },
+      "kubernetes-crd-author": {
         "truePositives": 11,
-        "falsePositives": 1,
+        "falsePositives": 0,
         "falseNegatives": 0,
-        "precision": 0.9166666666666666,
+        "precision": 1,
         "recall": 1
       },
       "pull-request-ready": {
@@ -264,30 +327,23 @@
         "recall": 0.9090909090909091
       }
     },
-    "negativeRejectionRate": 1,
-    "nearMissAccuracy": 1,
-    "overallAccuracy": 0.9461077844311377
+    "negativeRejectionRate": 0.975609756097561,
+    "nearMissAccuracy": 0.9444444444444444,
+    "overallAccuracy": 0.9425837320574163
   },
   "misses": [
     {
-      "id": "disc-08",
+      "id": "disc-02",
       "kind": "coverage",
-      "query": "our backstage.json says 1.53 but half the @backstage packages look older. can you work out whats actually installed",
+      "query": "is our backstage app on the new frontend system or the old one? i see both @backstage/app-defaults and @backstage/frontend-plugin-api in the lockfile and im confused",
       "expected": "backstage-repo-discovery",
-      "predicted": "backstage-upgrade"
+      "predicted": "backstage-plugin-migrate"
     },
     {
-      "id": "create-05",
+      "id": "perm-06",
       "kind": "coverage",
-      "query": "what should i call the plugin id for a plugin that talks to our internal 'Argus' monitoring service, and can you create the package",
-      "expected": "backstage-plugin-create",
-      "predicted": null
-    },
-    {
-      "id": "migrate-04",
-      "kind": "coverage",
-      "query": "we're on material ui v4 in this plugin and everything else has moved to @backstage/ui. how do i swap the components over without changing how it looks",
-      "expected": "backstage-plugin-migrate",
+      "query": "whats a conditional decision and when do i need one instead of just returning ALLOW or DENY",
+      "expected": "backstage-permissions",
       "predicted": null
     },
     {
@@ -312,11 +368,25 @@
       "predicted": null
     },
     {
-      "id": "qg-09",
+      "id": "docs-04",
       "kind": "coverage",
-      "query": "lint --since origin/main reports zero packages checked and then exits 0. that cant be right",
-      "expected": "backstage-quality-gate",
+      "query": "write the CI job that generates and publishes techdocs for each repo. we're on gitlab ci and using GCS",
+      "expected": "backstage-techdocs",
       "predicted": null
+    },
+    {
+      "id": "upg-10",
+      "kind": "coverage",
+      "query": "backend builds fine locally after the version bump but the docker image fails with a native module error",
+      "expected": "backstage-upgrade",
+      "predicted": null
+    },
+    {
+      "id": "inc-05",
+      "kind": "coverage",
+      "query": "sign-in stopped working in production this morning. we upgraded backstage last night. need to work out what broke",
+      "expected": "backstage-incident-debug",
+      "predicted": "backstage-auth"
     },
     {
       "id": "inc-06",
@@ -331,6 +401,21 @@
       "query": "CI is asking for a DCO sign off on every commit on my branch and i forgot. how do i fix that without breaking anything",
       "expected": "pull-request-ready",
       "predicted": null
+    },
+    {
+      "id": "near-14",
+      "kind": "near-miss",
+      "query": "swap the material ui components in our plugin for @backstage/ui equivalents. same look, new components",
+      "expected": "backstage-plugin-migrate",
+      "predicted": null,
+      "note": "theming vocabulary, migration intent"
+    },
+    {
+      "id": "neg-37",
+      "kind": "negative",
+      "query": "our pods keep getting OOMKilled. limits are 512Mi and the app is java",
+      "expected": null,
+      "predicted": "backstage-kubernetes"
     }
   ]
 }

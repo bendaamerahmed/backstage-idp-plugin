@@ -405,6 +405,19 @@ Done so far: <what is already implemented and validated>
 Resumes with: <what you will do once the answer arrives>
 ```
 
+**Leave nothing half-written for the blocked decision itself.** Work that does not
+depend on the decision stays on disk under `Done so far`. The artifact the
+decision is *about* does not: do not write a file with the contested value
+guessed, blanked, or marked with a placeholder.
+
+The reason is that a plausible-looking file outlives the report. A
+`catalog-info.yaml` with no owner, or an `app-config.yaml` with a commented-out
+key, gets committed by someone who did not read the BLOCKED report — and a wrong
+owner in the Software Catalog silently misroutes on-call, which is precisely the
+harm that stopping was supposed to avoid. If the partial artifact is genuinely
+useful, put it in the report as a fenced block the user can apply once they have
+decided, not on the filesystem where it can be picked up by accident.
+
 ### 5.6b Stop repeating a failing approach
 
 Track attempts per distinct problem. After **three** failed attempts at the same

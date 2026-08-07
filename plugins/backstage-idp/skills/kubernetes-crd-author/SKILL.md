@@ -1,7 +1,7 @@
 ---
 name: kubernetes-crd-author
 description: Design and implement Kubernetes CRDs and their controllers, with kubebuilder or by hand — API types, validation markers, generated manifests, reconcile loops, and CRD versioning.
-when_to_use: 'Write or change a CRD, build an operator, kubebuilder init or create api, controller-gen, controller-runtime, reconcile loop, "add a field to our custom resource", CRD validation rules, printer columns, status subresource, CRD versioning and conversion webhooks, envtest, our operator does not reconcile, kubectl apply rejects our CR.'
+when_to_use: 'Designing, writing or changing a CRD and its controller. Build an operator, kubebuilder init or create api, controller-gen, controller-runtime, reconcile loop, "add a field to our custom resource", what belongs in spec versus status, status conditions, CRD validation rules, printer columns, status subresource, moving from v1alpha1 to v1beta1, conversion webhooks and which version is the storage version, finalizers and objects stuck terminating, envtest, our operator does not reconcile, the API server rejects our CR. Also the right choice for CRD API design questions, even when no code is being written yet.'
 ---
 
 # Authoring Kubernetes CRDs and controllers

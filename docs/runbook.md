@@ -95,6 +95,29 @@ fixture exercises.
    will break again.
 5. `npm test`, `node scripts/mutation-check.mjs`, then release.
 
+## Adding a skill
+
+Six things move together. `agent-skill-list-matches-shipped` and
+`readme-skill-list-matches-shipped` fail in both directions, so a half-done
+addition is caught rather than merged.
+
+1. Write the `SKILL.md` against `docs/authoring.md`.
+2. Add it to agent §16 and update the count claim there.
+3. Add it to both READMEs.
+4. Add at least 8 positive cases to `test/tier3/corpus/triggers.json`, plus
+   near-misses against whichever existing skill is closest — that is where the
+   description actually gets tested.
+5. `npm run evals` and commit the results with the content.
+6. `npm run evals:behavior` — the results are keyed to a hash of the agent
+   definition, and §16 is part of it, so adding a skill invalidates them.
+
+Expect the first eval run to show the new skill absorbing a neighbour's work.
+Two of the three skills added in 1.2.0 did: `backstage-theming` took MUI-to-BUI
+component swapping from `backstage-plugin-migrate`, and `backstage-kubernetes`
+took CRD versioning and finalizers from `kubernetes-crd-author`. Both were fixed
+with one boundary clause in `when_to_use` naming the other skill, which is the
+same fix that took `backstage-incident-debug` from 59% to 91% precision.
+
 ## Trigger accuracy regressed
 
 **Signal:** `trigger-accuracy-floors` failed, or `trigger-results-fresh` says the
