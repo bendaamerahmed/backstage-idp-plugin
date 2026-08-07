@@ -12,6 +12,28 @@ result — in which case the content change is what is listed.
 
 ## [Unreleased]
 
+## [1.2.3] - 2026-08-07
+
+No change to the plugin; identical content to 1.2.0 through 1.2.2. This release
+restores a valid provenance attestation after a history rewrite invalidated
+1.2.2's.
+
+### Changed
+
+- `archive/` removed from the repository and from its published history. It held
+  the pre-review agent definition and the review report that produced the
+  load-bearing frontmatter decisions. Nothing was lost that the repository needs:
+  ADR-0003 through ADR-0006 each state their own context, decision and failure
+  mode without reference to the original documents, which is why they were
+  written as standalone arguments rather than as pointers.
+
+### Security
+
+- 1.2.2's provenance attestation named a commit that no longer exists after the
+  rewrite, so it no longer verifies. This release re-attests against the current
+  history. Verify with
+  `npm view @backstage-idp-plugin/backstage-idp@1.2.3 dist.attestations`.
+
 ## [1.2.2] - 2026-08-07
 
 No change to the plugin; identical content to 1.2.0 and 1.2.1. This release
@@ -191,7 +213,8 @@ researched against official Backstage documentation. Never executed, never
 tested, no release process. Recorded here for completeness; the review that
 preceded it is summarised in the ADRs under `docs/adr/`.
 
-[Unreleased]: https://github.com/bendaamerahmed/backstage-idp-plugin/compare/v1.2.2...HEAD
+[Unreleased]: https://github.com/bendaamerahmed/backstage-idp-plugin/compare/v1.2.3...HEAD
+[1.2.3]: https://github.com/bendaamerahmed/backstage-idp-plugin/releases/tag/v1.2.3
 [1.2.2]: https://github.com/bendaamerahmed/backstage-idp-plugin/releases/tag/v1.2.2
 [1.2.1]: https://github.com/bendaamerahmed/backstage-idp-plugin/releases/tag/v1.2.1
 [1.2.0]: https://github.com/bendaamerahmed/backstage-idp-plugin/releases/tag/v1.2.0
