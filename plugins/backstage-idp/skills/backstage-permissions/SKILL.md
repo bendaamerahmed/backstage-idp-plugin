@@ -1,7 +1,7 @@
 ---
 name: backstage-permissions
 description: Enable and extend the Backstage permission framework — define permissions, write a PermissionPolicy, enforce server-side in backend routes, and reflect decisions in the UI.
-when_to_use: 'Any authorization work in Backstage. "who can delete entities", "restrict this action", "add a permission check", "write a permission policy", "only owners should edit", "hide this button unless allowed", RBAC in Backstage, conditional decisions, permission rules, 403 from a plugin backend.'
+when_to_use: 'Any authorization work in Backstage. "who can delete entities", "restrict this action", "add a permission check", "write a permission policy", "only owners should edit", "hide this button unless allowed", RBAC in Backstage, conditional decisions, when do I need a conditional instead of ALLOW or DENY, permission rules, apply and toQuery, 403 from a plugin backend.'
 ---
 
 # Backstage permissions

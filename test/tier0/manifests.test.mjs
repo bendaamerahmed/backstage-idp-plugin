@@ -187,27 +187,35 @@ test('claude plugin validate exits zero', (t) => {
     return;
   }
 
-  try {
-    execFileSync(bin, ['plugin', 'validate', rel(PLUGIN_DIR)], {
-      cwd: REPO_ROOT,
-      stdio: 'pipe',
-      timeout: 120_000,
-    });
-  } catch (err) {
-    const out = [err.stdout?.toString(), err.stderr?.toString()].filter(Boolean).join('\n');
-    throw new Error(
-      [
-        '',
-        'RULE VIOLATED: plugin-validate-passes',
-        `  must hold: \`claude plugin validate ${rel(PLUGIN_DIR)}\` exits zero`,
-        '  because:   this is the loader that adopters actually run. Every other rule in Tier 0 is',
-        '             our reading of the contract; this one is the contract.',
-        `  exit code: ${err.status}`,
-        '  output:',
-        out.split('\n').map((l) => `    ${l}`).join('\n'),
-        '',
-      ].join('\n'),
-    );
+  // Both manifests: the plugin an adopter installs, and the marketplace entry
+  // that points at it. A valid plugin behind a broken marketplace is still
+  // uninstallable.
+  for (const [what, target] of [
+    ['plugin', rel(PLUGIN_DIR)],
+    ['marketplace', '.'],
+  ]) {
+    try {
+      execFileSync(bin, ['plugin', 'validate', target], {
+        cwd: REPO_ROOT,
+        stdio: 'pipe',
+        timeout: 120_000,
+      });
+    } catch (err) {
+      const out = [err.stdout?.toString(), err.stderr?.toString()].filter(Boolean).join('\n');
+      throw new Error(
+        [
+          '',
+          `RULE VIOLATED: plugin-validate-passes (${what})`,
+          `  must hold: \`claude plugin validate ${target}\` exits zero`,
+          '  because:   this is the loader that adopters actually run. Every other rule in Tier 0 is',
+          '             our reading of the contract; this one is the contract.',
+          `  exit code: ${err.status}`,
+          '  output:',
+          out.split('\n').map((l) => `    ${l}`).join('\n'),
+          '',
+        ].join('\n'),
+      );
+    }
   }
 });
 

@@ -1,7 +1,7 @@
 ---
 name: backstage-repo-discovery
 description: Map an unfamiliar Backstage monorepo — release line, frontend/backend generation, plugin inventory, config layering, real validation commands — before changing anything.
-when_to_use: First step in any Backstage task in a repo you have not mapped this session. "What version of Backstage is this", "is this NFS or legacy", "how do I build/test this repo", "where is the permission policy", "orient me in this Backstage repo".
+when_to_use: First step in any Backstage task in a repo you have not mapped this session. "What version of Backstage is this", "is this NFS or legacy", "how do I build/test this repo", "where is the permission policy", "orient me in this Backstage repo", inventory the plugin packages, which packages are ours versus upstream, which app-config files actually load, backstage.json disagrees with the installed package versions, what does CI actually run.
 ---
 
 # Backstage repo discovery

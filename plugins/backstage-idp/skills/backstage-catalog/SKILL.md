@@ -1,7 +1,7 @@
 ---
 name: backstage-catalog
 description: Model, ingest, and debug Backstage Software Catalog entities — descriptor format, refs, relations, custom EntityProviders and CatalogProcessors, and orphaned or vanishing entities.
-when_to_use: catalog-info.yaml, entity kinds, annotations, relations, ownership, custom entity provider, catalog processor, ingest from external system, entities disappeared after refresh, orphaned entity, conflicting entity ref, location processing error.
+when_to_use: catalog-info.yaml, entity kinds, annotations, relations, ownership, custom entity provider, catalog processor, ingest from external system, entities disappeared after refresh, orphaned entity, conflicting entity ref, location processing error, how should I model this thing as an entity, Component vs Resource vs System vs Domain, subcomponentOf, a provider wiped entities on a partial upstream response.
 ---
 
 # Backstage Software Catalog

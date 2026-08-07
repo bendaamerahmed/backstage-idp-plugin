@@ -1,7 +1,7 @@
 ---
 name: pull-request-ready
 description: Take a finished Backstage change to reviewer-ready — audit the diff for churn and leaked secrets, confirm changesets, API reports and config schema, and draft the PR title and body.
-when_to_use: ready for review, prepare a pull request, write the PR description, self-review my diff before pushing, do I need a changeset, does this need an API report, what should the PR title be, hand this off to a reviewer.
+when_to_use: ready for review, prepare a pull request, write the PR description, self-review my diff before pushing, do I need a changeset, does this need an API report, what should the PR title be, hand this off to a reviewer, unexplained package.json churn from yarn fix, did I commit anything I should not have, secrets or local config in my branch, generated files in the diff, DCO Signed-off-by missing on my commits.
 ---
 
 # Pull request ready

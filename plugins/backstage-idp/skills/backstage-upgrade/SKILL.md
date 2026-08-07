@@ -1,7 +1,7 @@
 ---
 name: backstage-upgrade
 description: Upgrade a Backstage monorepo across release lines using versions:bump, the Upgrade Helper and a per-release breaking-change review, one release line at a time.
-when_to_use: '"upgrade Backstage to 1.53", "we''re on 1.44 and need to catch up", "run versions:bump", "app won''t start after the upgrade", "move plugins to @backstage-community", "which release broke this config key".'
+when_to_use: '"upgrade Backstage to 1.53", "we''re on 1.44 and need to catch up", "run versions:bump", "app won''t start after the upgrade", "move plugins to @backstage-community", "which release broke this config key", "our plugins were renamed while we were behind", "which release removed this".'
 ---
 
 # Upgrade a Backstage monorepo

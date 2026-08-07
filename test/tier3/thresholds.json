@@ -1,0 +1,52 @@
+{
+  "_readme": [
+    "Committed trigger-accuracy floors. The build fails when a run drops below one of these.",
+    "",
+    "Floors sit roughly 10 points below the observed value recorded in `observed`, which is the",
+    "headroom that 3-vote majority scoring leaves. Single-pass scoring had a 3-point run-to-run",
+    "spread on an unchanged corpus; majority voting is what makes a hard floor honest rather than a",
+    "coin flip. Do not tighten a floor to the observed value — the next green run becomes luck.",
+    "",
+    "When a floor is breached the fix is almost always the skill's `description` and `when_to_use`,",
+    "not its body. See docs/authoring.md.",
+    "",
+    "`negativeRejectionRate` has the least headroom on purpose. A skill that fires on a Kubernetes",
+    "question is worse than one that occasionally misses its own topic: it displaces the answer the",
+    "user wanted and burns their context on a procedure that does not apply."
+  ],
+  "measuredWith": {
+    "model": "claude-sonnet-5",
+    "repeats": 3,
+    "cases": 167,
+    "on": "2026-08-07"
+  },
+  "floors": {
+    "overallAccuracy": 0.88,
+    "negativeRejectionRate": 0.94,
+    "nearMissAccuracy": 0.9,
+    "perSkillPrecision": 0.85,
+    "perSkillRecall": 0.68
+  },
+  "observed": {
+    "overallAccuracy": 0.946,
+    "negativeRejectionRate": 1.0,
+    "nearMissAccuracy": 1.0,
+    "perSkill": {
+      "backstage-auth": { "precision": 1.0, "recall": 0.73 },
+      "backstage-catalog": { "precision": 1.0, "recall": 1.0 },
+      "backstage-incident-debug": { "precision": 0.91, "recall": 0.91 },
+      "backstage-permissions": { "precision": 0.92, "recall": 1.0 },
+      "backstage-plugin-create": { "precision": 1.0, "recall": 0.91 },
+      "backstage-plugin-migrate": { "precision": 1.0, "recall": 0.92 },
+      "backstage-quality-gate": { "precision": 1.0, "recall": 0.91 },
+      "backstage-repo-discovery": { "precision": 1.0, "recall": 0.91 },
+      "backstage-scaffolder": { "precision": 1.0, "recall": 1.0 },
+      "backstage-techdocs": { "precision": 1.0, "recall": 1.0 },
+      "backstage-upgrade": { "precision": 0.92, "recall": 1.0 },
+      "pull-request-ready": { "precision": 1.0, "recall": 0.91 }
+    }
+  },
+  "knownWeakness": {
+    "backstage-auth": "Recall 0.73 is the lowest in the set and is the floor-setter. The three misses are definitional or adjacent rather than wrong: 'what is CIMD' and 'how do we give CI a token' are judged to need no skill, and 'everyone gets logged out after we changed the ingress' goes to backstage-incident-debug, which has a defensible claim on it. Tightening this further risks pulling genuine incidents away from incident-debug, which is the more expensive error."
+  }
+}

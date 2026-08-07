@@ -1,7 +1,7 @@
 ---
 name: backstage-incident-debug
 description: Diagnose a failing production or staging Backstage instance — collect evidence, narrow to one layer, read backend logs and health endpoints, and correlate with recent deploys and config changes.
-when_to_use: Backstage is down or 500ing, entities vanished, catalog stale or behind, slow catalog reads, scaffolder task stuck, TechDocs 404, sign-in broke after an upgrade, permission denied after a policy change, backend crash-looping on config, integration rate limit exhausted.
+when_to_use: A DEPLOYED Backstage instance is failing right now and the failing layer is not yet known. Backstage down or 500ing in production or staging, backend crash-looping on config, entities vanished from a running instance, catalog stale or slow, integration rate limit exhausted, correlate a failure with a recent deploy. Once the layer IS known, or the problem is on a laptop or an unmerged branch, use that domain's skill instead.
 ---
 
 # Backstage Incident Debugging
