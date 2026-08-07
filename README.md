@@ -35,7 +35,7 @@ The twelve skills are the procedures it follows:
 Add this repository as a plugin marketplace, then install by name:
 
 ```text
-/plugin marketplace add OWNER-TBD/REPO-TBD
+/plugin marketplace add bendaamerahmed/backstage-idp-plugin
 /plugin install backstage-idp
 ```
 

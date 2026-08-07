@@ -86,7 +86,7 @@ export async function cached(key, ttlDays, probe) {
   return { ...result, fromCache: false };
 }
 
-const UA = 'backstage-idp-validation-harness (+https://github.com/OWNER-TBD/REPO-TBD)';
+const UA = 'backstage-idp-validation-harness (+https://github.com/bendaamerahmed/backstage-idp-plugin)';
 
 async function request(url, { method = 'GET', timeoutMs = 20_000, headers = {} } = {}) {
   const ctrl = new AbortController();

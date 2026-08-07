@@ -93,6 +93,6 @@ researched against official Backstage documentation. Never executed, never
 tested, no release process. Recorded here for completeness — see
 `archive/HARDENING-REPORT.md` for the review that preceded it.
 
-[Unreleased]: https://github.com/OWNER-TBD/REPO-TBD/compare/v1.1.0...HEAD
-[1.1.0]: https://github.com/OWNER-TBD/REPO-TBD/releases/tag/v1.1.0
-[1.0.0]: https://github.com/OWNER-TBD/REPO-TBD/releases/tag/v1.0.0
+[Unreleased]: https://github.com/bendaamerahmed/backstage-idp-plugin/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/bendaamerahmed/backstage-idp-plugin/releases/tag/v1.1.0
+[1.0.0]: https://github.com/bendaamerahmed/backstage-idp-plugin/releases/tag/v1.0.0

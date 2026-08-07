@@ -1,12 +1,12 @@
 # Completion report
 
-**Date:** 2026-08-07 · **Version prepared:** 1.1.0 (not tagged — see "Blocked")
+**Date:** 2026-08-07 · **Version prepared:** 1.1.0 (release gate passing; not tagged — see "Release status")
 
 ## What changed
 
 The artifact arrived as a loose directory containing a hand-authored plugin that
 had never been parsed, linted, or executed against anything. It is now a
-repository with 15 commits, a five-tier validation suite that runs in 87
+repository with 18 commits, a five-tier validation suite that runs in 87
 seconds, CI, a release path, and documentation that states its own gaps.
 
 The plugin content itself changed in eight places. Every one was found by a test,
@@ -119,49 +119,41 @@ Stated in full in `docs/test-coverage.md`. The three that matter:
    were almost all descriptive prose, and a rule that fires 89 times gets
    suppressed rather than fixed.
 
-## Blocked: the release cannot be tagged
+## Release status
 
-`npm run check:release-gate` reports 13 unresolved placeholders. Four decisions
-end up in a published artifact and cannot be guessed — a marketplace entry
-pointing at a repository that does not exist, and a security contact that goes
-nowhere, are worse than an untagged release. They are tracked in
-`OPEN-DECISIONS.md`:
+`npm run check:release-gate` **passes** for v1.1.0.
 
-1. GitHub owner/repo slug (`OWNER-TBD/REPO-TBD`)
-2. Code owners team (`@OWNER-TBD` in `CODEOWNERS`)
-3. Security disclosure contact (currently the author's personal address)
-4. Support-matrix floor — `baseline.supportMatrix.oldestSupportedLine` is `1.44`,
-   which is the oldest line the guidance was *written* against, not a line
-   anything has been tested on
+The repository was created at `bendaamerahmed/backstage-idp-plugin` on
+2026-08-07, which resolved decisions 1-3 in `OPEN-DECISIONS.md`. Decision 4 —
+the support-matrix floor — remains open and deliberately does not block a
+release: `1.44` is the oldest line the guidance was *written* against, not a
+tested claim, and `docs/test-coverage.md` says so.
 
-Verified in a scratch copy that resolving 1–3 takes the gate to green, so the
-release path works end to end.
+Nothing in this session pushed, tagged, published or opened a pull request. The
+`origin` remote is configured locally; the commands are in the handover below.
 
-### To release, once decided
+Three things still need a human, none of them code:
+
+- **The repository is private.** A marketplace entry can only be installed from
+  a repository the installer can reach.
+- **Branch protection** — documented in `CONTRIBUTING.md`; required checks and
+  reviews need GitHub Pro or an organisation on a private repository.
+- **Actions minutes** — the nightly integration job builds real `create-app`
+  trees, which is billed on a private repository. Review the schedules in
+  `integration.yml` and `currency.yml` before enabling them.
+
+### To publish
 
 ```bash
-node scripts/apply-open-decisions.mjs \
-  --owner <org> --repo <name> \
-  --codeowners <@org/team> \
-  --security-contact <email>
-
-npm test
-npm run check:release-gate
-git commit -am "Resolve the open decisions in OPEN-DECISIONS.md"
+git push -u origin main
 git tag -a v1.1.0 -m "v1.1.0"
+git push origin v1.1.0
 ```
 
-Pushing the tag triggers the release workflow, which re-runs the full suite and
-the mutation check, builds the reproducible `.plugin` bundle, generates notes
-from `CHANGELOG.md`, and attaches both. Nothing in this session pushed, tagged,
-published or opened a pull request.
-
-### Also needs a human
-
-- **Branch protection** — expectations documented in `CONTRIBUTING.md`; cannot
-  be configured until decision 1 is made.
-- **Build the remaining fixtures** — `npm run fixtures:build` (roughly 25
-  minutes, ~2 GB). CI does this nightly and caches by release line.
+The tag push triggers the release workflow, which re-runs the full suite and the
+mutation check with `CLAUDE_CLI_REQUIRED=1`, runs the release gate, builds the
+reproducible `.plugin` bundle, generates notes from `CHANGELOG.md`, and attaches
+both.
 
 ## One thing worth reading if nothing else
 
