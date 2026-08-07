@@ -1,0 +1,126 @@
+# Tier 4 — integration against real Backstage monorepos. Nightly.
+#
+# NOT a required check. It builds real `create-app` trees, which takes tens of
+# minutes and depends on the npm registry being healthy; blocking merges on it
+# would mean a registry hiccup blocks unrelated work. It opens an issue instead.
+#
+# Runs in a container so the fixture install is reproducible and cannot pick up
+# a runner's globally installed toolchain.
+name: integration
+
+on:
+  schedule:
+    - cron: '0 3 * * *'
+  workflow_dispatch:
+    inputs:
+      force_rebuild:
+        description: 'Rebuild fixtures from scratch instead of using the cache'
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  integration:
+    name: integration (node ${{ matrix.node }}, ${{ matrix.fixture }})
+    runs-on: ubuntu-latest
+    # Sharded by fixture AND node major. A single job building three fixtures on
+    # two Node versions runs well past the 45-minute budget; this keeps each
+    # shard around 20 minutes and they run in parallel.
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        node: ['22', '24']
+        fixture: [nfs-current, legacy]
+        include:
+          # hybrid derives from nfs-current, so it only earns a shard on one
+          # Node major — the derivation is a file copy, not a second install.
+          - node: '22'
+            fixture: hybrid
+    container:
+      image: node:${{ matrix.node }}-bookworm
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+
+      - name: Install harness dependencies
+        run: npm ci
+
+      - name: Read the baseline release line
+        id: baseline
+        run: echo "line=$(node -p "require('./baseline.json').release.currentLine")" >> "$GITHUB_OUTPUT"
+
+      - name: Restore fixture cache
+        id: fixture-cache
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: fixtures/${{ matrix.fixture }}
+          # Keyed on the release line: a fixture built for an older line is not
+          # the fixture the scenarios were written against, and Tier 4 refuses
+          # to use one.
+          key: fixture-${{ matrix.fixture }}-${{ steps.baseline.outputs.line }}-node${{ matrix.node }}
+
+      - name: Build fixture
+        if: steps.fixture-cache.outputs.cache-hit != 'true' || inputs.force_rebuild
+        run: npm run fixtures:build -- ${{ matrix.fixture }} ${{ inputs.force_rebuild && '--force' || '' }}
+
+      - name: Run Tier 4
+        run: npm run test:tier4
+
+      - name: Prove the scenarios can fail
+        # An integration test that cannot go red is worse than none: it reports
+        # confidence it has not earned. This deliberately breaks the fixture and
+        # requires the suite to notice.
+        run: node scripts/fixtures/prove-can-fail.mjs ${{ matrix.fixture }}
+
+      - name: Scan generated fixture output for secrets
+        # A fixture is a real install in a CI environment. If a token ever leaks
+        # into one, it must not reach the cache or an artifact.
+        run: node scripts/scan-fixture-secrets.mjs ${{ matrix.fixture }}
+
+  report:
+    name: report failures
+    runs-on: ubuntu-latest
+    needs: integration
+    if: failure() && github.event_name == 'schedule'
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+      - uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7
+        with:
+          script: |
+            const url = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            const title = 'Nightly integration failed';
+            const body = [
+              `The nightly Tier 4 run failed: ${url}`,
+              '',
+              'Tier 4 asserts against a real Backstage monorepo using the fixture\'s own',
+              'toolchain, so a failure here is one of three things, in decreasing order of',
+              'likelihood:',
+              '',
+              '1. **Upstream moved.** A fresh create-app no longer matches something the',
+              '   plugin asserts. This is the case the tier exists for — see',
+              '   docs/runbook.md, "An integration fixture breaks".',
+              '2. **Fixture build failed.** Registry or network. Re-run the workflow.',
+              '3. **A scenario is wrong.** Check whether the assertion still describes',
+              '   something the plugin actually claims.',
+              '',
+              'Do not disable the scenario to get back to green.',
+            ].join('\n');
+
+            const open = await github.rest.issues.listForRepo({
+              owner: context.repo.owner, repo: context.repo.repo,
+              state: 'open', labels: 'integration',
+            });
+            if (open.data.length) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner, repo: context.repo.repo,
+                issue_number: open.data[0].number, body,
+              });
+            } else {
+              await github.rest.issues.create({
+                owner: context.repo.owner, repo: context.repo.repo,
+                title, body, labels: ['integration'],
+              });
+            }

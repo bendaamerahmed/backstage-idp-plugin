@@ -26,7 +26,9 @@
     "fixtures:clean": "node scripts/fixtures/clean.mjs",
     "build:plugin": "node scripts/build-plugin.mjs",
     "check:release-gate": "node scripts/release-gate.mjs",
-    "coverage:report": "node scripts/coverage-report.mjs"
+    "coverage:report": "node scripts/coverage-report.mjs",
+    "evals:behavior": "node scripts/run-behavior-evals.mjs",
+    "evals:all": "npm run evals && npm run evals:behavior"
   },
   "devDependencies": {
     "markdownlint-cli2": "0.23.2",

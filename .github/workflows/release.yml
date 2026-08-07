@@ -1,0 +1,102 @@
+# Release. Triggered by pushing a tag, never by a push to main.
+#
+# A release is a human decision. CI's job is to make it reproducible, not to
+# make it automatic — see CONTRIBUTING.md "Releasing" for the steps that come
+# before the tag.
+name: release
+
+on:
+  push:
+    tags: ['v*.*.*']
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Existing tag to build a release for'
+        required: true
+
+permissions:
+  contents: read
+
+jobs:
+  gate:
+    name: release gate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          ref: ${{ inputs.tag || github.ref }}
+          fetch-depth: 0
+
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+        with:
+          node-version: '22'
+          cache: npm
+
+      - run: npm ci
+
+      - name: Install the Claude CLI
+        run: npm install -g @anthropic-ai/claude-code
+
+      - name: Full suite
+        env:
+          CLAUDE_CLI_REQUIRED: '1'
+        run: npm test
+
+      - name: Prove the rules can fail
+        run: node scripts/mutation-check.mjs
+
+      - name: Release gate
+        # Fails while any item in OPEN-DECISIONS.md is unresolved. A placeholder
+        # owner or repository slug in a published artifact is not a cosmetic
+        # problem: it is a security contact that goes nowhere and a marketplace
+        # entry pointing at a repository that does not exist.
+        run: npm run check:release-gate
+
+      - name: Tag matches the manifests
+        run: node scripts/release-gate.mjs --check-tag "${{ inputs.tag || github.ref_name }}"
+
+  publish:
+    name: build and publish
+    runs-on: ubuntu-latest
+    needs: gate
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          ref: ${{ inputs.tag || github.ref }}
+          fetch-depth: 0
+
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+        with:
+          node-version: '22'
+          cache: npm
+
+      - run: npm ci
+
+      - name: Build the plugin bundle
+        run: npm run build:plugin
+
+      - name: Extract release notes from the changelog
+        id: notes
+        run: node scripts/release-notes.mjs "${{ inputs.tag || github.ref_name }}" > release-notes.md
+
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: backstage-idp-plugin
+          path: dist/*.plugin
+          if-no-files-found: error
+
+      - name: Publish the GitHub release
+        uses: softprops/action-gh-release@3bb12739c298aeb8a4eeaf626c5b8d85266b0e65 # v2
+        with:
+          tag_name: ${{ inputs.tag || github.ref_name }}
+          body_path: release-notes.md
+          files: dist/*.plugin
+          fail_on_unmatched_files: true
+          # The marketplace entry lives in this repository at
+          # .claude-plugin/marketplace.json and is served from the default
+          # branch, so publishing the release IS publishing the entry — provided
+          # the tag was cut from main. The gate above checks that the version in
+          # every manifest matches the tag.
+          make_latest: true

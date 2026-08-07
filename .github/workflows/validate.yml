@@ -1,0 +1,137 @@
+# Fast validation. Every push and every pull request.
+#
+# Everything here must finish in a couple of minutes. Anything that needs a real
+# Backstage install lives in integration.yml (nightly) and anything that depends
+# on live upstream state lives in currency.yml (weekly) — a Backstage release
+# must never be able to block an unrelated pull request.
+#
+# All actions are pinned to commit SHAs. A tag is mutable; pinning to `@v5`
+# means trusting whoever can move that tag, forever.
+name: validate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: validate-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: validate (node ${{ matrix.node }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # The plugin asserts Backstage supports exactly these two majors, and
+        # the harness has to run on both for that claim to be worth anything.
+        # baseline.node.supportedMajors is the source of truth; Tier 2 fails if
+        # this matrix and that field disagree.
+        node: ['22', '24']
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          # Tier 1 checks link liveness against a cache keyed by content, and
+          # the release-gate check reads the tag history.
+          fetch-depth: 0
+
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Restore network-check cache
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: .cache
+          key: net-cache-${{ hashFiles('plugins/**/*.md', 'baseline.json') }}
+          restore-keys: net-cache-
+
+      - name: Install the Claude CLI
+        # `claude plugin validate` is the authority on plugin structure. Tier 0
+        # skips it locally when the CLI is absent; CLAUDE_CLI_REQUIRED=1 makes
+        # that skip a failure here, so the strongest rule in the suite cannot
+        # silently stop running in the one place it is authoritative.
+        run: npm install -g @anthropic-ai/claude-code
+
+      - name: Structural and content rules (Tier 0 + Tier 1)
+        env:
+          CLAUDE_CLI_REQUIRED: '1'
+        run: npm run test:fast
+
+      - name: markdownlint
+        run: npm run lint:md
+
+      - name: Prove the rules can fail
+        # A suite that is green on a healthy tree proves nothing on its own.
+        # Each mutant breaks exactly one thing and must be caught by the
+        # specific rule that claims to cover it.
+        run: node scripts/mutation-check.mjs
+
+      - name: Coverage report
+        run: npm run coverage:report
+
+  trigger-evals:
+    # Only when content that drives triggering changes. These are model calls;
+    # running them on a README edit is waste.
+    name: trigger evals
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+        with:
+          node-version: '22'
+          cache: npm
+
+      - run: npm ci
+
+      - name: Check the committed eval results describe this revision
+        # Does not call the model. The results file carries a hash of the corpus
+        # plus every description and when_to_use, so a frontmatter edit without
+        # re-running `npm run evals` fails here rather than passing on stale
+        # numbers. Re-measuring requires the CLI and an API key, which a fork PR
+        # does not have — so the contract is that the author commits the results
+        # alongside the content change.
+        run: node --test "test/tier3/triggers.test.mjs"
+
+  secret-scan:
+    name: secret scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          fetch-depth: 0
+
+      - name: gitleaks
+        uses: gitleaks/gitleaks-action@ff98106e4c7b2bc287b24eaf42907196329070c7 # v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITLEAKS_ENABLE_UPLOAD_ARTIFACT: 'false'
+
+  dependency-review:
+    name: dependency review
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+
+      - uses: actions/dependency-review-action@a1d282b36b6f3519aa1f3fc636f609c47dddb294 # v5.0.0
+        with:
+          # This repository is markdown plus a two-package test harness. Any new
+          # dependency is a supply-chain liability out of proportion to what it
+          # buys, so the bar is deliberately low.
+          fail-on-severity: low
+          comment-summary-in-pr: on-failure

@@ -1,0 +1,129 @@
+# Staleness detection. Weekly.
+#
+# This is the workflow the whole repository exists around. Backstage ships a
+# mainline release every month; a skill that confidently states a removed API is
+# worse than no skill, because the agent acts on it. Nothing else in CI can
+# catch that — the content is internally consistent and every other tier passes.
+#
+# Its output is an issue listing exactly which assertions to re-verify and where
+# each came from. A scheduled job whose output is a red X gets muted inside two
+# months, and then the staleness detection is gone.
+name: currency
+
+on:
+  schedule:
+    # Mondays 07:00 UTC. Backstage ships on the Tuesday before the third
+    # Wednesday, so Monday catches the previous week's release with a full
+    # working week to act on it.
+    - cron: '0 7 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  currency:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+        with:
+          node-version: '22'
+          cache: npm
+
+      - run: npm ci
+
+      - name: Compare baseline.json against live upstream sources
+        id: currency
+        # Continues on failure: a failing check IS the signal, and the issue
+        # body below is the deliverable. Failing the step here would skip it.
+        continue-on-error: true
+        run: |
+          set +e
+          npm run test:currency 2>&1 | tee currency-output.txt
+          echo "exit_code=${PIPESTATUS[0]}" >> "$GITHUB_OUTPUT"
+
+      - name: Build the issue body
+        id: issue
+        run: |
+          set +e
+          node scripts/currency-issue.mjs > issue-body.md
+          echo "has_findings=$?" >> "$GITHUB_OUTPUT"
+          node scripts/currency-issue.mjs --title > issue-title.txt
+          cat issue-body.md
+
+      - name: Open or update the currency issue
+        if: steps.issue.outputs.has_findings == '1'
+        uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7
+        with:
+          script: |
+            const fs = require('fs');
+            const body = fs.readFileSync('issue-body.md', 'utf8');
+            const title = fs.readFileSync('issue-title.txt', 'utf8').trim();
+
+            // One open issue at a time. A new issue every Monday for the same
+            // unresolved drift is how a team learns to ignore the label.
+            const existing = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              labels: 'currency',
+            });
+
+            if (existing.data.length > 0) {
+              const issue = existing.data[0];
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                title,
+                body,
+              });
+              core.notice(`Updated existing currency issue #${issue.number}`);
+            } else {
+              const created = await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title,
+                body,
+                labels: ['currency', 'staleness'],
+              });
+              core.notice(`Opened currency issue #${created.data.number}`);
+            }
+
+      - name: Close the currency issue when the baseline is current again
+        if: steps.issue.outputs.has_findings == '0'
+        uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7
+        with:
+          script: |
+            const open = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              labels: 'currency',
+            });
+            for (const issue of open.data) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                body: 'Baseline is current again as of this run. Closing automatically.',
+              });
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                state: 'closed',
+              });
+            }
+
+      - name: Fail the run when the staleness budget is exceeded
+        # Distinct from the issue. The issue is the actionable output; this makes
+        # the workflow visibly red on the schedule page so a quiet failure to
+        # read issues does not hide a plugin three release lines behind.
+        if: steps.currency.outputs.exit_code != '0'
+        run: |
+          echo "The currency suite failed. See the issue opened above for the assertions to re-verify."
+          exit 1
