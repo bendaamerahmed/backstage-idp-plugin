@@ -1,0 +1,8 @@
+# Tier 0 asserts LF line endings on every markdown file in the plugin.
+# Without this, a Windows checkout rewrites them to CRLF and the structural
+# suite fails on a clone rather than on a change. Keep these in sync with
+# test/tier0/formatting.test.mjs.
+* text=auto eol=lf
+*.png binary
+*.jpg binary
+*.plugin binary

@@ -1,0 +1,33 @@
+{
+  "name": "backstage-idp-marketplace",
+  "owner": {
+    "name": "ahmed ben",
+    "email": "ahmed.b.daamer@gmail.com"
+  },
+  "metadata": {
+    "description": "Backstage internal-developer-platform engineering plugins for Claude Code.",
+    "version": "1.1.0"
+  },
+  "plugins": [
+    {
+      "name": "backstage-idp",
+      "source": "./plugins/backstage-idp",
+      "description": "Autonomous full-stack engineering for Spotify Backstage developer portals: one senior subagent plus twelve verified Backstage workflow skills.",
+      "version": "1.1.0",
+      "author": {
+        "name": "ahmed ben"
+      },
+      "license": "MIT",
+      "category": "development",
+      "keywords": [
+        "backstage",
+        "idp",
+        "developer-portal",
+        "platform-engineering",
+        "software-catalog",
+        "scaffolder",
+        "techdocs"
+      ]
+    }
+  ]
+}

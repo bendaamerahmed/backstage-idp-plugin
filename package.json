@@ -1,0 +1,35 @@
+{
+  "name": "backstage-idp-marketplace",
+  "version": "1.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Validation harness and release tooling for the backstage-idp Claude Code plugin. Hosts no runtime code — the plugin itself is markdown.",
+  "license": "MIT",
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "packageManager": "npm@11.6.2",
+  "scripts": {
+    "test": "node scripts/run-suite.mjs",
+    "test:fast": "node --test test/tier0/ test/tier1/",
+    "test:tier0": "node --test test/tier0/",
+    "test:tier1": "node --test test/tier1/",
+    "test:tier2": "node --test test/tier2/",
+    "test:tier3": "node --test test/tier3/",
+    "test:tier4": "node --test --test-timeout=3600000 test/tier4/",
+    "test:currency": "npm run test:tier2",
+    "test:integration": "npm run test:tier4",
+    "lint:md": "markdownlint-cli2",
+    "lint:md:fix": "markdownlint-cli2 --fix",
+    "evals": "node scripts/run-trigger-evals.mjs",
+    "fixtures:build": "node scripts/fixtures/build-all.mjs",
+    "fixtures:clean": "node scripts/fixtures/clean.mjs",
+    "build:plugin": "node scripts/build-plugin.mjs",
+    "check:release-gate": "node scripts/release-gate.mjs",
+    "coverage:report": "node scripts/coverage-report.mjs"
+  },
+  "devDependencies": {
+    "markdownlint-cli2": "0.23.2",
+    "yaml": "2.9.0"
+  }
+}

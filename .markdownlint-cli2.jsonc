@@ -1,0 +1,46 @@
+{
+  // Style rules for every markdown file in the repository.
+  //
+  // The disabled rules below are disabled for a reason, not because they were
+  // noisy. If you re-enable one, expect to rewrite content — do not reformat the
+  // plugin to satisfy a lint rule without checking the skill still reads as a
+  // procedure.
+  "config": {
+    "default": true,
+
+    // MD013 line-length. Skill bodies wrap at 90 for prose but contain long
+    // single-line procedure steps and URLs that cannot be wrapped without
+    // breaking the numbered-list structure Tier 0 enforces.
+    "MD013": false,
+
+    // MD024 duplicate headings. `Preconditions` / `Procedure` / `Verification`
+    // recur across skills, and within the agent definition sub-sections
+    // legitimately repeat headings like `Purpose:`.
+    "MD024": { "siblings_only": true },
+
+    // MD029 ordered-list prefix. Tier 0 already enforces ascending 1..n on the
+    // Procedure list, with a better message than this rule produces.
+    "MD029": { "style": "ordered" },
+
+    // MD033 inline HTML. The agent definition uses HTML comments to carry the
+    // frontmatter rationale, which Tier 0 asserts is present.
+    "MD033": { "allowed_elements": ["br"] },
+
+    // MD034 bare URLs. Baseline source URLs are deliberately bare so they can be
+    // extracted verbatim by scripts/extract-assertions.mjs.
+    "MD034": false,
+
+    // MD041 first-line-heading. Every SKILL.md opens with YAML frontmatter.
+    "MD041": false,
+
+    // MD046 code-block style: fenced only. Indented blocks inside a numbered
+    // procedure are indistinguishable from list continuation.
+    "MD046": { "style": "fenced" },
+
+    // MD055/MD056 table pipe style — the Section 0 baseline table is parsed by
+    // Tier 0, which depends on leading and trailing pipes.
+    "MD055": { "style": "leading_and_trailing" }
+  },
+  "globs": ["**/*.md", "!node_modules", "!fixtures", "!archive"],
+  "ignores": ["node_modules/**", "fixtures/**", "archive/**"]
+}

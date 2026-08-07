@@ -1,0 +1,118 @@
+{
+  "$schema": "./schemas/baseline.schema.json",
+  "_readme": [
+    "Every machine-checkable fact the plugin asserts, with the source it was verified against and the date it was verified.",
+    "Tier 0 asserts that Section 0 of the agent definition agrees with this file.",
+    "Tier 2 (weekly) asserts that this file still agrees with live upstream sources.",
+    "When you correct a fact: change it here, cite the source in the commit body, and set a fresh verifiedOn."
+  ],
+  "baselineVerifiedOn": "2026-08-07",
+  "release": {
+    "currentLine": "1.53",
+    "currentVersion": "1.53.1",
+    "cadence": "mainline monthly, on the Tuesday before the third Wednesday; next line weekly on Tuesdays",
+    "deprecationPolicy": "a deprecation ships in at least one mainline release before removal",
+    "source": "https://versions.backstage.io/v1/tags/main/manifest.json",
+    "verifiedOn": "2026-08-07",
+    "verifiedBy": "fetched manifest; releaseVersion field read directly"
+  },
+  "node": {
+    "supportedMajors": [22, 24],
+    "enginesRange": "22 || 24",
+    "policySince": "1.46.0",
+    "policy": "exactly two adjacent even majors",
+    "source": "npm:@backstage/create-app@0.9.0 templates/default-app/package.json.hbs -> engines.node",
+    "verifiedOn": "2026-08-07",
+    "verifiedBy": "npm pack of the published tarball; field read from the template, not from documentation"
+  },
+  "createApp": {
+    "package": "@backstage/create-app",
+    "version": "0.9.0",
+    "flags": ["--legacy", "--path", "--skip-install", "--template-path"],
+    "removedFlags": ["--next"],
+    "templates": ["default-app", "legacy-app"],
+    "defaultTemplateIsNfs": true,
+    "nfsDefaultSince": "1.49.0",
+    "rootScripts": [
+      "start",
+      "build:backend",
+      "build:all",
+      "build-image",
+      "tsc",
+      "tsc:full",
+      "clean",
+      "test",
+      "test:all",
+      "test:e2e",
+      "fix",
+      "lint",
+      "lint:all",
+      "prettier:check",
+      "new"
+    ],
+    "source": "npm:@backstage/create-app@0.9.0 dist/index.cjs.js (commander option list) and templates/default-app/package.json.hbs",
+    "verifiedOn": "2026-08-07",
+    "verifiedBy": "npm pack; option list read from the shipped commander program, script list read from the shipped template"
+  },
+  "frontendSystem": {
+    "default": "new-frontend-system",
+    "defaultSince": "1.49.0",
+    "appEntrypoint": "createApp from @backstage/frontend-defaults, rendered via App.createRoot()",
+    "legacyEntrypoint": "createApp from @backstage/app-defaults with <FlatRoutes> JSX",
+    "source": "npm:@backstage/create-app@0.9.0 templates/default-app/packages/app/src/{App,index}.tsx",
+    "verifiedOn": "2026-08-07",
+    "verifiedBy": "read the shipped template files: App.tsx imports @backstage/frontend-defaults; index.tsx calls App.createRoot()"
+  },
+  "uiLibrary": {
+    "package": "@backstage/ui",
+    "shortName": "BUI",
+    "formerName": "Canon",
+    "replacing": "@material-ui",
+    "inDefaultTemplate": true,
+    "templateEvidence": "packages/app/src/index.tsx imports '@backstage/ui/css/styles.css'",
+    "source": "npm:@backstage/create-app@0.9.0 templates/default-app/packages/app/src/index.tsx",
+    "verifiedOn": "2026-08-07",
+    "verifiedBy": "read the shipped template file"
+  },
+  "communityPlugins": {
+    "scope": "@backstage-community",
+    "repository": "https://github.com/backstage/community-plugins",
+    "packagePrefix": "@backstage-community/plugin-",
+    "verifiedOn": "2026-08-07",
+    "verifiedBy": "registry HEAD on sampled @backstage-community/plugin-* names extracted from the plugin content"
+  },
+  "supplyChain": {
+    "_note": "Traps that a copy-pasted command would walk into. Enforced by Tier 1.",
+    "squattedBareNames": [
+      {
+        "name": "backstage-cli",
+        "actual": "@backstage/cli",
+        "risk": "`npx backstage-cli <cmd>` installs an unrelated third-party package published by a different maintainer, not the Backstage CLI.",
+        "verifiedOn": "2026-08-07",
+        "verifiedBy": "https://registry.npmjs.org/backstage-cli returns 200 for an unrelated package: 'The CLI companion that lets you upload builds to your Backstage Server.'"
+      }
+    ],
+    "safeInvocations": ["yarn backstage-cli", "yarn <script>", "npx @backstage/cli", "npx @techdocs/cli"]
+  },
+  "supportMatrix": {
+    "_note": "See OPEN-DECISIONS.md #4. oldestSupportedLine is the oldest line the skills' guidance was WRITTEN against, not a line anything has been tested on.",
+    "oldestSupportedLine": "1.44",
+    "newestVerifiedLine": "1.53",
+    "tested": {
+      "nfs-current": "1.53",
+      "legacy": "not yet pinned — see docs/test-coverage.md",
+      "hybrid": "not yet pinned — see docs/test-coverage.md"
+    }
+  },
+  "stalenessBudget": {
+    "_note": "Tier 2 policy. A 'line' is one mainline minor (1.53 -> 1.54).",
+    "warnLinesBehind": 1,
+    "failLinesBehind": 3,
+    "rationale": "One line behind is normal — Backstage ships monthly and the baseline is re-verified on a weekly job. Two is a missed cycle worth an issue. Three means the plugin has been asserting facts about a release line nobody has looked at in a quarter, which is where a removed API becomes an instruction the agent acts on."
+  },
+  "linkChecking": {
+    "_note": "Hosts that rate-limit aggressively enough to make link checking flaky. Excluded from the every-commit tier, still checked weekly.",
+    "rateLimitedHosts": ["github.com", "www.github.com", "registry.npmjs.org", "roadie.io"],
+    "neverCheck": ["localhost", "127.0.0.1", "example.com", "host"]
+  }
+}
