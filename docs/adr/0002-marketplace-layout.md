@@ -43,5 +43,7 @@ already had disagreed once before that rule existed.
 **Deleted rather than kept in sync.** The top-level
 `backstage-fullstack-developer.md` was byte-identical to the copy inside the
 plugin. Two copies of a 2,000-line file with no test comparing them is a
-divergence waiting to happen. The plugin copy is canonical; the pre-review
-ancestor stays in `archive/` because it is audit trail, not a second source.
+divergence waiting to happen. The plugin copy is canonical. The pre-review
+ancestor and the review report were kept in `archive/` for a time and have since
+been removed; their conclusions live in ADR-0003 through ADR-0006, each of which
+states its failure mode without needing the original document.

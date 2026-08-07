@@ -188,8 +188,8 @@ had never been parsed, linted, or executed against a real Backstage repository.
 
 Initial hand-authored plugin: one subagent definition and twelve skills,
 researched against official Backstage documentation. Never executed, never
-tested, no release process. Recorded here for completeness — see
-`archive/HARDENING-REPORT.md` for the review that preceded it.
+tested, no release process. Recorded here for completeness; the review that
+preceded it is summarised in the ADRs under `docs/adr/`.
 
 [Unreleased]: https://github.com/bendaamerahmed/backstage-idp-plugin/compare/v1.2.2...HEAD
 [1.2.2]: https://github.com/bendaamerahmed/backstage-idp-plugin/releases/tag/v1.2.2

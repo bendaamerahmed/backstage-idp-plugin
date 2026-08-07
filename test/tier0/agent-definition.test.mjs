@@ -56,7 +56,7 @@ test('agent frontmatter parses and uses only recognised fields', () => {
 // The load-bearing safety properties.
 //
 // Each of these was already the cause of a real failure mode; see
-// archive/HARDENING-REPORT.md section A and docs/adr/0003..0006. They are
+// docs/adr/0003 through 0006, which state each one. They are
 // asserted individually, with the failure mode in the rationale, so that a
 // future maintainer who deletes one gets told what breaks rather than a diff.
 // ---------------------------------------------------------------------------

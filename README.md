@@ -143,7 +143,6 @@ matters: when a test fails, fix the content.
 - [`docs/test-coverage.md`](docs/test-coverage.md) — what each tier covers and what it does not
 - [`docs/runbook.md`](docs/runbook.md) — what to do when a job goes red
 - [`docs/adr/`](docs/adr/) — the decisions a future maintainer would otherwise reverse-engineer
-- [`archive/`](archive/) — the pre-review agent definition and the hardening report, kept as audit trail
 
 ## Licence
 

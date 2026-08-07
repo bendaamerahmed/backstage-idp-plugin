@@ -41,6 +41,6 @@
     // Tier 0, which depends on leading and trailing pipes.
     "MD055": { "style": "leading_and_trailing" }
   },
-  "globs": ["**/*.md", "!node_modules", "!fixtures", "!archive"],
-  "ignores": ["node_modules/**", "fixtures/**", "archive/**"]
+  "globs": ["**/*.md", "!node_modules", "!fixtures"],
+  "ignores": ["node_modules/**", "fixtures/**"]
 }
