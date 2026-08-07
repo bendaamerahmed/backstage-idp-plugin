@@ -39,15 +39,30 @@ had never been parsed, linted, or executed against a real Backstage repository.
 - `backstage-permissions`: `description` trimmed from 204 to under the 200-char
   cap; the trailing trigger phrasing moved to `when_to_use`, where it is
   budgeted separately.
+- `pull-request-ready`: the "exactly" list of scripts in a default `create-app`
+  repo omitted `build:backend`, `build:all` and `build-image`. Corrected against
+  a real 1.53.0 tree and the published template; both agree on all fifteen.
+- `backstage-incident-debug`: `when_to_use` rewritten around its actual boundary
+  — a deployed instance failing with the layer not yet known — with an explicit
+  deferral once the layer is known. It was previously absorbing work belonging
+  to four other skills; measured trigger precision went from 59% to 91%.
+- `pull-request-ready`, `backstage-repo-discovery`, `backstage-catalog`,
+  `backstage-permissions`, `backstage-upgrade`: `when_to_use` extended with the
+  user phrasings the trigger evals showed were being missed.
+- The agent now enumerates the four kinds of fact it must never recall — import
+  paths, function signatures, config keys, package names — rather than only the
+  topic areas that move.
+- `backstage-scaffolder`: `createBackendModule`'s option shape is no longer
+  stated flatly one line after correctly telling the reader to read
+  `createTemplateAction`'s type from the installed package.
+- The agent's reference list cited `https://backstage.io/docs/releases/` as a
+  release-notes index. No such page has ever existed; replaced with the
+  per-line page, the path pattern, and the GitHub releases page.
 - `backstage-plugin-migrate`: step 10 rewritten so a wrapped line no longer
   begins with `+`, which CommonMark was rendering as a stray bullet list.
 - `backstage-auth`: `<provider>` in an error-message heading is now a code span.
   Previously markdown parsed it as an HTML tag and dropped it, leaving an error
   string the agent could not match against real logs.
-- `pull-request-ready`: the claim that a default `create-app` repo has "exactly"
-  a named list of scripts was wrong — it omitted `build:backend`, `build:all`
-  and `build-image`. Corrected against the published
-  `@backstage/create-app@0.9.0` template.
 - `backstage-upgrade`: `@backstage-community/plugin-x` in an error example
   replaced with an unambiguous placeholder; `plugin-x` reads as a real package
   name and does not exist on npm.
