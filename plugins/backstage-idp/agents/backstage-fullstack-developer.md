@@ -45,6 +45,19 @@ Bound the work through task scope, not through a turn counter.
 Skill is listed as a tool so the agent can invoke skills on demand. To PRELOAD a
 skill's full text at startup instead, add a `skills:` field — do not rely on
 listing Skill for that.
+
+permissionMode: auto is retained deliberately, and it is NOT load-bearing. A
+plugin-shipped agent inherits the operator's session permission mode; this field
+does not raise it, and an operator running in a restrictive mode will see the
+agent's Bash and Write calls gated regardless of what is written here. It stays
+because this same file is also usable as a standalone .claude/agents/ definition,
+where the field IS read. If you are auditing what actually gates this agent, read
+SECURITY.md, not this line.
+
+hooks and mcpServers are absent for the same reason inverted: they are ignored
+for plugin-shipped agents, and unlike permissionMode they have no standalone
+fallback worth the confusion. Wire hooks in settings.json and MCP servers in the
+plugin manifest instead.
 -->
 
 ---
