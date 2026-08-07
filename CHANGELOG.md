@@ -12,6 +12,20 @@ result — in which case the content change is what is listed.
 
 ## [Unreleased]
 
+## [1.2.2] - 2026-08-07
+
+No change to the plugin; identical content to 1.2.0 and 1.2.1. This release
+exists so the published package actually carries the provenance attestation
+1.2.1's notes claimed for it.
+
+### Security
+
+- `npm publish` runs with `--provenance` again. Trusted publishing authenticates
+  a publish but does not attest it, and `npm config get provenance` is `false` by
+  default — the flag had been removed on the assumption that OIDC implied it,
+  which is why 1.2.1 published with no attestation. Verify with
+  `npm view @backstage-idp-plugin/backstage-idp@1.2.2 dist.attestations`.
+
 ## [1.2.1] - 2026-08-07
 
 No change to the plugin. The agent definition and all fifteen skills are
@@ -23,9 +37,14 @@ verifiable and to fix a release pipeline that had never run green.
 - npm publishing moved to **OIDC trusted publishing**. There is no longer an
   `NPM_TOKEN` secret anywhere: the registry trusts one workflow file in one
   repository, and each publish uses a short-lived credential that cannot be
-  extracted or reused. The practical gain for an adopter is that the package now
-  carries a provenance attestation, so you can verify it was built by this
-  workflow from this commit rather than uploaded from someone's laptop.
+  extracted or reused. Verifiable on the published package, whose `_npmUser` is
+  `GitHub Actions` with a `trustedPublisher` record rather than a human account.
+
+  **This release does not carry a provenance attestation.** The entry originally
+  claimed it did. Trusted publishing authenticates a publish; it does not attest
+  it, and `provenance` defaults to `false` — the `--provenance` flag had been
+  removed on the assumption that OIDC implied it. Corrected in the workflow; the
+  next release carries the attestation.
 
 ### Fixed
 
@@ -172,7 +191,8 @@ researched against official Backstage documentation. Never executed, never
 tested, no release process. Recorded here for completeness — see
 `archive/HARDENING-REPORT.md` for the review that preceded it.
 
-[Unreleased]: https://github.com/bendaamerahmed/backstage-idp-plugin/compare/v1.2.1...HEAD
+[Unreleased]: https://github.com/bendaamerahmed/backstage-idp-plugin/compare/v1.2.2...HEAD
+[1.2.2]: https://github.com/bendaamerahmed/backstage-idp-plugin/releases/tag/v1.2.2
 [1.2.1]: https://github.com/bendaamerahmed/backstage-idp-plugin/releases/tag/v1.2.1
 [1.2.0]: https://github.com/bendaamerahmed/backstage-idp-plugin/releases/tag/v1.2.0
 [1.1.0]: https://github.com/bendaamerahmed/backstage-idp-plugin/releases/tag/v1.1.0
