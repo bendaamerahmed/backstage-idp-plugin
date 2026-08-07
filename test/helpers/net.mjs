@@ -164,6 +164,37 @@ export async function urlResolves(url, ttlDays = 30) {
   });
 }
 
+/**
+ * Download and unpack a published npm tarball into `destDir`, returning the
+ * directory containing its `package/` root.
+ *
+ * Deliberately does NOT shell out to `npm pack`. On Windows npm is a `.cmd`
+ * shim, which execFileSync refuses to spawn without `shell: true`, and
+ * `shell: true` concatenates arguments instead of escaping them — a package
+ * name is attacker-influenced input in a currency job that reads dist-tags. The
+ * registry gives us the tarball URL directly, so the whole question disappears.
+ *
+ * `tar` is used for extraction only, with a fixed argument list.
+ */
+export async function downloadPackage(name, version, destDir) {
+  const packument = await fetchJson(`https://registry.npmjs.org/${name.replace('/', '%2f')}`);
+  const tarballUrl = packument.versions?.[version]?.dist?.tarball;
+  if (!tarballUrl) throw new Error(`no tarball for ${name}@${version}`);
+
+  const res = await request(tarballUrl, { timeoutMs: 120_000 });
+  if (!res.ok) throw new Error(`tarball ${tarballUrl}: HTTP ${res.status}`);
+
+  const { writeFileSync, mkdirSync } = await import('node:fs');
+  const { join } = await import('node:path');
+  const { execFileSync } = await import('node:child_process');
+
+  mkdirSync(destDir, { recursive: true });
+  const tgz = join(destDir, 'package.tgz');
+  writeFileSync(tgz, Buffer.from(await res.arrayBuffer()));
+  execFileSync('tar', ['-xzf', 'package.tgz'], { cwd: destDir, stdio: 'pipe', timeout: 120_000 });
+  return join(destDir, 'package');
+}
+
 /** Run probes with bounded concurrency so we do not open 60 sockets at once. */
 export async function mapLimit(items, limit, fn) {
   const out = new Array(items.length);
