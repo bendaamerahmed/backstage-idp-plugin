@@ -145,6 +145,16 @@ const MUTANTS = [
     },
   },
   {
+    id: 'test-scripts-are-portable',
+    what: 'revert a test script to the bare-directory form that fails on Windows and Linux CI',
+    edit: (root) => {
+      const p = path.join(root, 'package.json');
+      const j = JSON.parse(fs.readFileSync(p, 'utf8'));
+      j.scripts['test:tier0'] = 'node --test test/tier0/';
+      fs.writeFileSync(p, `${JSON.stringify(j, null, 2)}\n`);
+    },
+  },
+  {
     id: 'mutation-commands-gated',
     what: 'add an ungated `git push` to a procedure step',
     edit: (root) =>

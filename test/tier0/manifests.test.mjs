@@ -237,3 +237,30 @@ test('the npm package identity matches the plugin identity', async () => {
     },
   );
 });
+
+test('every node --test script uses the portable glob form', () => {
+  checkRule(
+    'test-scripts-are-portable',
+    'no `node --test` script passes a bare directory; each names a glob such as "test/tier0/*.test.mjs"',
+    'The directory form fails on Windows AND on Linux CI with MODULE_NOT_FOUND, while the glob form works everywhere. This shipped: `npm run test:fast` was documented in CONTRIBUTING.md and the README as the fast tier, and had never been executed — the suite was only ever run through globs or scripts/run-suite.mjs. A documented command that does not run is worse than a missing one.',
+    (r) => {
+      const pkg = readJson(path.join(REPO_ROOT, 'package.json'));
+      for (const [name, cmd] of Object.entries(pkg.scripts ?? {})) {
+        if (!cmd.includes('node --test')) continue;
+        // Every positional after the flags must contain a glob character.
+        const args = cmd
+          .split(/\s+/)
+          .slice(cmd.split(/\s+/).indexOf('--test') + 1)
+          .filter((a) => !a.startsWith('--'));
+        for (const arg of args) {
+          const clean = arg.replace(/^["']|["']$/g, '');
+          r.require(clean.includes('*'), 'package.json', {
+            found: `scripts.${name} passes "${clean}" to node --test`,
+            expected: 'a glob, e.g. "test/tier0/*.test.mjs"',
+            fix: 'the bare-directory form is not portable; use the glob form',
+          });
+        }
+      }
+    },
+  );
+});
