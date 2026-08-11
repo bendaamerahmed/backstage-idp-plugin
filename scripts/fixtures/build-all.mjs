@@ -86,9 +86,14 @@ function npxArgv(args) {
  * before it has read anything. The stream has to stay open for the life of the
  * process, so this writes the answer and then simply leaves it open.
  */
-function runInteractive(cmd, args, { answers = [], timeout = 45 * 60 * 1000, cwd } = {}) {
+function runInteractive(cmd, args, { answers = [], timeout = 45 * 60 * 1000, cwd, env } = {}) {
   return new Promise((resolve, reject) => {
-    const child = spawn(cmd, args, { cwd, stdio: ['pipe', 'inherit', 'inherit'], windowsHide: true });
+    const child = spawn(cmd, args, {
+      cwd,
+      stdio: ['pipe', 'inherit', 'inherit'],
+      windowsHide: true,
+      env: { ...process.env, ...env },
+    });
     const timer = setTimeout(() => {
       child.kill('SIGKILL');
       reject(new Error(`timed out after ${Math.round(timeout / 60000)} minutes`));
@@ -148,7 +153,21 @@ async function buildCreateApp(name, spec, { force }) {
     dir,
     ...spec.createAppFlags,
   ]);
-  const res = await runInteractive(cmd, args, { answers: [name] });
+  const res = await runInteractive(cmd, args, {
+    answers: [name],
+    env: {
+      // Yarn Berry turns on immutable installs whenever CI is set, and
+      // create-app's template lockfile does not exactly match what resolves at
+      // install time — so `yarn install` refuses with YN0028 and create-app
+      // reports "Failed to create app!". It works on a laptop and fails on
+      // every CI runner, which is precisely the shape of bug a nightly job
+      // exists to find. It found this one on its first real scheduled run.
+      //
+      // Scoped to this one command rather than unsetting CI globally: the rest
+      // of the build should still behave like CI.
+      YARN_ENABLE_IMMUTABLE_INSTALLS: 'false',
+    },
+  });
   if (res.status !== 0) {
     throw new Error(
       `create-app failed for ${name} (exit ${res.status}).\n` +

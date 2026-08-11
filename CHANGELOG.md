@@ -12,6 +12,25 @@ result — in which case the content change is what is listed.
 
 ## [Unreleased]
 
+### Fixed
+
+- The nightly integration job could never have passed. Yarn Berry enables
+  immutable installs whenever `CI` is set, and `create-app`'s template lockfile
+  does not exactly match what resolves at install time — so `yarn install`
+  failed with `YN0028` and create-app reported "Failed to create app!". Every
+  fixture, on every Node version, on every runner. It worked locally only
+  because `CI` is unset on a laptop.
+
+  The builder now sets `YARN_ENABLE_IMMUTABLE_INSTALLS=false` for that single
+  command, scoped rather than unsetting `CI` globally so the rest of the build
+  still behaves like CI. Reproduced with `CI=true` before fixing and verified
+  after: the fixture builds and all five Tier 4 scenarios pass against it.
+
+  Found by the nightly job on its first real scheduled run, which opened
+  [#1](https://github.com/bendaamerahmed/backstage-idp-plugin/issues/1)
+  automatically. No test could have caught this — it is a CI-environment bug,
+  and the nightly job is the only thing that runs in a CI environment.
+
 ## [1.3.0] - 2026-08-07
 
 ### Added

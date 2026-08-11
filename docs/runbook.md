@@ -69,6 +69,21 @@ recorded in `docs/test-coverage.md` — that is the honest path, not deletion.
 updating. It currently answers exactly one prompt ("Enter a name for the app")
 on stdin, and holds stdin open because closing it makes inquirer force-close.
 
+**`YN0028: The lockfile would have been modified by this install`.** Yarn Berry
+enables immutable installs whenever `CI` is set, and create-app's template
+lockfile does not exactly match what resolves at install time, so `yarn install`
+refuses and create-app reports "Failed to create app!". The builder sets
+`YARN_ENABLE_IMMUTABLE_INSTALLS=false` for that one command. If you see this
+again, check that override survived — and reproduce with `CI=true` locally
+rather than trusting a laptop run:
+
+```bash
+BSIDP_FIXTURES_ROOT=/tmp/cifix CI=true npm run fixtures:build -- nfs-current
+```
+
+This class of bug — passes on a laptop, fails on every runner — is exactly what
+the nightly job is for. It found this one on its first real scheduled run.
+
 ## Backstage removed an API a skill depends on
 
 The hardest case, because nothing goes red automatically — the content is
