@@ -263,7 +263,12 @@ if (process.argv[1]?.endsWith('build-all.mjs')) {
   // scenario that pins backstage-kubernetes' config shape reads it, and leaving
   // it as a separate manual step would mean that scenario silently reports a
   // missing file rather than checking anything.
-  if (names.includes('nfs-current') && fixtureIsFresh('nfs-current')) {
+  // Conditioned on nfs-current being PRESENT, not on it having been requested.
+  // The hybrid shard asks only for `hybrid`, builds nfs-current as its base, and
+  // then needs the schema too — keying this on the request list left that shard
+  // with a fixture and no schema, and the Kubernetes scenario failed reporting a
+  // missing file rather than a real drift.
+  if (fixtureIsFresh('nfs-current')) {
     try {
       const { execFileSync } = await import('node:child_process');
       const here = path.dirname(new URL(import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, '$1'));
