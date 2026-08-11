@@ -203,7 +203,18 @@ async function buildHybrid(spec, opts) {
     console.log(`  hybrid: cached (release line ${fixtureStamp('hybrid').releaseLine})`);
     return dir;
   }
-  if (!fs.existsSync(base)) throw new Error(`hybrid derives from ${spec.derivedFrom}, which has not been built`);
+
+  // Build the base if it is not here. CI shards by fixture, so the `hybrid`
+  // shard is a separate job with its own cache and its own empty workspace —
+  // asking it to build `hybrid` alone used to fail with "derives from
+  // nfs-current, which has not been built". A builder that cannot satisfy its
+  // own dependency is a builder that only works in the order one person happens
+  // to run it in.
+  if (!fixtureIsFresh(spec.derivedFrom)) {
+    console.log(`  hybrid: base "${spec.derivedFrom}" is not built here; building it first`);
+    await buildCreateApp(spec.derivedFrom, FIXTURES[spec.derivedFrom], { force: opts.force });
+  }
+  if (!fs.existsSync(base)) throw new Error(`hybrid derives from ${spec.derivedFrom}, which could not be built`);
 
   console.log('  hybrid: deriving from nfs-current');
   fs.rmSync(dir, { recursive: true, force: true });

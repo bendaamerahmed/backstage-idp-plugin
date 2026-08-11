@@ -31,6 +31,18 @@ result — in which case the content change is what is listed.
   automatically. No test could have caught this — it is a CI-environment bug,
   and the nightly job is the only thing that runs in a CI environment.
 
+- A second bug, exposed once the first was fixed: the `hybrid` shard failed with
+  "hybrid derives from nfs-current, which has not been built". CI shards by
+  fixture, so that shard is a separate job with its own cache and an empty
+  workspace. `buildHybrid` now builds its base when it is absent — a builder
+  that cannot satisfy its own dependency only works in the order one person
+  happens to run it in — and the shard's cache covers both directories so the
+  base is not rebuilt from scratch nightly.
+
+  With the first fix alone, four of five shards passed, including **`legacy` on
+  both Node majors, which had never been built anywhere**. That fixture existed
+  only as an untested script until this run.
+
 ## [1.3.0] - 2026-08-07
 
 ### Added

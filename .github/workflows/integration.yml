@@ -56,7 +56,12 @@ jobs:
         id: fixture-cache
         uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
         with:
-          path: fixtures/${{ matrix.fixture }}
+          # `hybrid` is derived from `nfs-current`, so its shard needs both on
+          # disk. Caching only fixtures/hybrid meant the base was rebuilt from
+          # scratch every night inside that shard.
+          path: |
+            fixtures/${{ matrix.fixture }}
+            fixtures/nfs-current
           # Keyed on the release line: a fixture built for an older line is not
           # the fixture the scenarios were written against, and Tier 4 refuses
           # to use one.
